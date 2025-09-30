@@ -48,10 +48,10 @@ export const Section: React.FC<SectionProps> = ({
           let images: { src: string; alt?: string }[] = [];
           if (Array.isArray(cmp.images)) {
             cmp.images.forEach((img: any) => {
-              if (img.file) {
+              if (img?.file) {
                 images.push({
                   src: imageLink(img.file.url),
-                  alt: img.alt || img.file.name,
+                  alt: img?.alt || img.file.name,
                 });
               }
             });
@@ -102,7 +102,7 @@ export const Section: React.FC<SectionProps> = ({
   );
 };
 
-const Group: React.FC<GroupProps> = ({ backgroundImage, sections }) => (
+const Group: React.FC<GroupProps> = ({ backgroundImage, sections }: any) => (
   <div
     className="w-screen max-h-screen"
     style={{
@@ -113,7 +113,7 @@ const Group: React.FC<GroupProps> = ({ backgroundImage, sections }) => (
     }}
   >
     <div className="h-screen overflow-y-auto">
-      {sections.map((section, idx) => (
+      {sections.map((section: any, idx: number) => (
         <Section
           key={idx}
           background={section.bgColor || section.background || "#FFF"}

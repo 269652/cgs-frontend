@@ -37,8 +37,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ct
       {images.map((img, idx) => (
         <SwiperSlide key={idx} className="">
           <Image
-            src={img.src}
-            alt={img.alt || `Image ${idx + 1}`}
+            src={img?.src}
+            alt={img?.alt || `Image ${idx + 1}`}
             width={1000}
             height={455}
             style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
