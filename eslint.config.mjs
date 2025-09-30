@@ -1,3 +1,22 @@
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    plugins: {
+      "@typescript-eslint": require("@typescript-eslint/eslint-plugin"),
+    },
+    rules: {
+      // ...other rules
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+    ],
+  },
+];
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
@@ -19,6 +38,7 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+
   },
 ];
 
