@@ -18,30 +18,66 @@ type ImageGalleryProps = {
 };
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ctaLink, ctaLabel, autocycle }) => (
-  <div style={{ position: 'relative', width: '100%', maxWidth: '100vw', borderRadius: '8px' }}>
+  <div
+    className="relative w-full max-w-full rounded-lg"
+    style={{ height: '100%', minHeight: '320px' }}
+  >
     {(title || subtitle) && (
-      <div className="absolute left-8 top-8 z-10 text-white drop-shadow-lg">
-        {title && <h2 className="h1 text-3xl font-bold mb-2">{title}</h2>}
-        {subtitle && <p className="h2 text-lg mb-2 max-w-2/3">{subtitle}</p>}
+      <div
+        className="absolute left-8 top-8 z-10 text-white drop-shadow-lg"
+        style={{
+          left: '2vw',
+          top: '2vw',
+          width: '90vw',
+          maxWidth: '100%',
+        }}
+      >
+        {title && (
+          <h2
+            className="h1 font-bold mb-2"
+            style={{
+              fontSize: 'clamp(2rem, 7vw, 3rem)',
+              lineHeight: '1.1',
+              textShadow: '0 2px 8px rgba(0,0,0,0.25)',
+            }}
+          >
+            {title}
+          </h2>
+        )}
+        {subtitle && (
+          <p
+            className="h2 mb-2"
+            style={{
+              fontSize: 'clamp(1rem, 4vw, 1.5rem)',
+              maxWidth: '80vw',
+              textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}
+          >
+            {subtitle}
+          </p>
+        )}
       </div>
     )}
     <Swiper
       modules={[Navigation, Pagination, Autoplay]}
       navigation
       pagination={{ clickable: true }}
-      spaceBetween={20}
+      spaceBetween={0}
       slidesPerView={1}
-      style={{ width: '100%', borderRadius: '8px' }}
+      style={{ width: '100%', height: '100%', borderRadius: '8px' }}
       autoplay={autocycle ? { delay: autocycle * 1000, disableOnInteraction: false } : false}
     >
       {images.map((img, idx) => (
-        <SwiperSlide key={idx} className="">
+        <SwiperSlide
+          key={idx}
+          className="flex items-center justify-center w-full h-[60vw] min-h-[320px] md:h-[455px]"
+          style={{ height: '100%', minHeight: '320px' }}
+        >
           <Image
             src={img?.src}
             alt={img?.alt || `Image ${idx + 1}`}
-            width={1000}
-            height={455}
-            style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+            fill
+            style={{ objectFit: 'cover', borderRadius: '8px' }}
             sizes="100vw"
             priority={idx === 0}
           />
@@ -52,6 +88,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ct
       <a
         href={ctaLink}
         className="absolute left-8 bottom-8 z-10 bg-accent text-white px-6 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition"
+        style={{ left: '2vw', bottom: '2vw', fontSize: 'clamp(1rem, 4vw, 1.25rem)' }}
         target="_blank"
         rel="noopener noreferrer"
       >

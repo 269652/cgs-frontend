@@ -33,7 +33,7 @@ export const Section: React.FC<SectionProps> = ({
 }) => {
   return (
     <div
-      className="h-[calc(100vh)] p-8 flex flex-col justify-center items-center"
+      className="min-h-[calc(100vh)] p-8 flex flex-col justify-center items-center"
       style={{
         background: background || undefined,
         borderRadius: "8px",
