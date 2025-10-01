@@ -19,8 +19,7 @@ type ImageGalleryProps = {
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ctaLink, ctaLabel, autocycle }) => (
   <div
-    className="relative w-full max-w-full rounded-lg"
-    style={{ height: '100%', minHeight: '320px' }}
+    className="relative w-full max-w-full rounded-lg h-[calc(100vh-8px)] lg:h-[calc(100vh-4rem)] "
   >
     {(title || subtitle) && (
       <div

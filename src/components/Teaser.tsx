@@ -74,13 +74,13 @@ const TeaserClassic: React.FC<TeaserProps> = ({ title, image, copy, ctaLink, cta
 const TeaserModern: React.FC<TeaserProps> = ({ title, image, copy, ctaLink, ctaLabel }) => (
   <div className="relative flex flex-col md:flex-row items-center bg-white rounded-xl shadow-lg overflow-hidden max-w-3xl mx-auto my-8 w-full">
     {/* Mobile: image on top, text below */}
-    <div className="w-full md:w-1/2 relative mb-4 md:mb-0 md:h-full flex justify-center">
+    <div className="w-full md:w-1/2 relative mb-4 md:mb-0 md:h-screen flex justify-center">
       <Image
         src={image?.src}
         alt={image?.alt || title}
         width={image?.width || 700}
-        height={image?.height || 400}
-        style={{ borderRadius: 8, objectFit: 'cover', width: '100%', height: 'auto', maxHeight: '320px' }}
+        height={image?.height || 800}
+        style={{ borderRadius: 8, objectFit: 'cover', width: '100%', height: '100%'}}
       />
     </div>
     <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">

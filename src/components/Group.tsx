@@ -33,10 +33,9 @@ export const Section: React.FC<SectionProps> = ({
 }) => {
   return (
     <div
-      className="min-h-[calc(100vh)] p-8 flex flex-col justify-center items-center"
+      className="min-h-full h-auto p-1 md:p-8 flex flex-col justify-center items-center"
       style={{
         background: background || undefined,
-        borderRadius: "8px",
         backgroundImage: bgImage ? `url(${bgImage.url})` : undefined,
         backgroundSize: bgImage ? "cover" : undefined,
       }}
