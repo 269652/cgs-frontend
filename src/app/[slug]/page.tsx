@@ -24,15 +24,12 @@ export default async function Home({ params }: any) {
   // Assume first page for demo
   const page = pages[0] || {};
   
-  // Handle case where no page is found
+  // Handle case where no page is found (404)
   if (!page.id && pages.length === 0) {
     return (
       <ErrorDisplay 
-        title="Page Not Found"
+        variant="404"
         message={`The page "${(await params).slug}" could not be found.`}
-        error="Page does not exist"
-        retryUrl="/"
-        retryLabel="Go Home"
       />
     );
   }

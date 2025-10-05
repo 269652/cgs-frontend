@@ -30,13 +30,13 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   const isFullscreen = variant === 'fullscreen';
   return (
     <div
-      className={`relative rounded-lg overflow-hidden ${
+      className={`relative overflow-hidden ${
         isFullscreen 
-          ? 'w-full h-[calc(100vh-8px)] lg:h-[calc(100vh-4rem)]' 
-          : 'w-full h-[300px] md:h-[400px] my-6'
+          ? 'w-full h-screen min-h-screen' 
+          : 'w-full h-[300px] md:h-[400px] my-6 rounded-lg'
       }`}
       style={{ 
-        maxWidth: '100%'
+        maxWidth: isFullscreen ? 'none' : '100%'
       }}
     >
     {(title || subtitle) && (

@@ -106,7 +106,10 @@ export const Section: React.FC<SectionProps> = ({
               }
             });
           }
-          return <Cmp key={idx} {...cmp} images={images} autocycle={7} variant="inline" />;
+          // Use fullscreen for the first image gallery in non-inline sections
+          const isFirstImageGallery = idx === 0;
+          const galleryVariant = (isInline || !isFirstImageGallery) ? "inline" : "fullscreen";
+          return <Cmp key={idx} {...cmp} images={images} autocycle={7} variant={galleryVariant} />;
         }
         if (cmp.__component === "teaser.teaser") {
           // Map Strapi teaser fields to Teaser props

@@ -17,13 +17,13 @@ export default async function Home() {
   // Assume first page for demo
   const page = pages[0] || {};
   
-  // Handle case where no page is found
+  // Handle case where no homepage is found
   if (!page.id && pages.length === 0) {
     return (
       <ErrorDisplay 
-        title="Page Not Found"
+        variant="404"
+        title="Homepage Not Found"
         message="The homepage could not be found. Please check your content management system."
-        error="No homepage configured"
       />
     );
   }
