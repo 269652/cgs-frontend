@@ -32,7 +32,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     <div
       className={`relative overflow-hidden ${
         isFullscreen 
-          ? 'w-full h-[calc(100vh-2rem)] min-h-screen md:min-h-[calc(100vh-2rem)]  rounded-lg' 
+          ? 'w-full h-[calc(100vh-4rem)] min-h-screen md:min-h-[calc(100vh-4rem)]  rounded-lg' 
           : 'w-full h-[300px] md:h-[400px] my-6 rounded-lg'
       }`}
       style={{ 
