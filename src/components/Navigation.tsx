@@ -22,7 +22,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ category, isOpen, onTog
       <button
         type="button"
         onClick={onToggle}
-        className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 touch-manipulation"
+        className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-200 touch-manipulation"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
@@ -42,12 +42,12 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ category, isOpen, onTog
       </button>
       
       {/* Desktop hover menu */}
-      <div className="hidden md:group-hover:flex absolute top-full left-0 w-64 bg-white shadow-lg rounded-md border border-gray-200 z-50 flex-col">
+      <div className="hidden md:group-hover:flex absolute top-full left-0 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 z-50 flex-col">
         {sortedEntries.map((entry) => (
           <Link
             key={entry.id}
             href={entry.link}
-            className="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors duration-200"
+            className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
           >
             {entry.label}
           </Link>
@@ -57,12 +57,12 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ category, isOpen, onTog
       {/* Mobile/tablet click menu */}
       <div className={`${
         isOpen ? 'flex' : 'hidden'
-      } md:hidden absolute top-full left-0 w-64 bg-white shadow-lg rounded-md border border-gray-200 z-50 flex-col max-h-96 overflow-y-auto`}>
+      } md:hidden absolute top-full left-0 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 z-50 flex-col max-h-96 overflow-y-auto`}>
         {sortedEntries.map((entry) => (
           <Link
             key={entry.id}
             href={entry.link}
-            className="block px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors duration-200 touch-manipulation"
+            className="block px-4 py-3 text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 touch-manipulation"
             onClick={onToggle} // Close menu when item is clicked
           >
             {entry.label}

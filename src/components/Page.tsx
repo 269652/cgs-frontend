@@ -81,7 +81,7 @@ const Page: React.FC<PageProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col w-full">
+    <div className="min-h-screen flex flex-col w-full bg-white dark:bg-gray-900">
       {header && <Header {...header} navigation={navigation} />}
       <main className="flex-1 w-full">
         {renderPageContent()}

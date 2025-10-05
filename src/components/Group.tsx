@@ -15,7 +15,7 @@ const componentMap: Record<string, React.FC<any>> = {
 };
 
 type SectionProps = {
-  background: string;
+  background?: string;
   content: any[];
   contentRelation?: Array<{
     content: string;
@@ -69,9 +69,9 @@ export const Section: React.FC<SectionProps> = ({
         isInline 
           ? 'p-1 md:p-2 !px-8' // Minimal padding for inline usage
           : 'min-h-ful min-h-screen p-2 md:p-8' // Full height and padding for standalone sections
-      }`}
+      } ${!background && !bgImage ? 'bg-white dark:bg-gray-900' : ''}`}
       style={{
-        background,
+        background: background || undefined,
         backgroundImage: bgImage ? `url(${bgImage.url})` : undefined,
         backgroundSize: bgImage ? "cover" : undefined,
       }}
@@ -203,7 +203,7 @@ const Group: React.FC<GroupProps> = async ({
         {sections?.map((section: any, idx: number) => (
           <Section
             key={idx}
-            background={section.bgColor || section.background || "#FFF"}
+            background={section.bgColor || section.background}
             content={section.content || []}
             contentRelation={section.contentRelation || []}
             bgImage={section.bgImage}

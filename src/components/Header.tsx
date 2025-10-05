@@ -20,9 +20,9 @@ export interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) => (
-  <header className="w-full bg-white">
+  <header className="w-full bg-white dark:bg-gray-900">
     {/* Top bar with logo and contact info */}
-    <div className="shadow flex flex-col md:flex-row gap-6 items-center justify-between px-8 py-6">
+    <div className="shadow dark:shadow-gray-800 flex flex-col md:flex-row gap-6 items-center justify-between px-8 py-6">
       <div className="flex flex-col md:flex-row items-center">
             
         {logo && (
@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
     )}
         {/* Navigation menu */}
     {navigation && navigation.length > 0 && (
-      <div className="bg-gray-50 border-b border-gray-200 px-8 py-4">
+      <div className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-8 py-4">
         <Navigation categories={navigation} />
       </div>
     )}

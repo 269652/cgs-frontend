@@ -35,7 +35,7 @@ export default async function Home() {
   console.log("page", pages, "GROUPS", groups, "NAVIGATION", navigation);
   
   return (
-    <div className="font-sans items-center justify-items-center min-h-screen max-w-screen">
+    <div className="font-sans items-center justify-items-center min-h-screen max-w-screen bg-white dark:bg-gray-900">
       <main className="flex flex-col items-center w-full">
         <Page 
           {...page}

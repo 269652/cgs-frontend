@@ -37,7 +37,7 @@ export default async function Home({ params }: any) {
   const groups = page.groups || [];
   console.log("page", pages, "GROUPS", groups, navigation);
   return (
-    <div className="font-sans items-center justify-items-center min-h-screen">
+    <div className="font-sans items-center justify-items-center min-h-screen bg-white dark:bg-gray-900">
       <main className="flex flex-col items-center w-full">
         <Page groups={groups} navigation={navigation} {...page} />
       </main>
