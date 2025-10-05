@@ -2,8 +2,9 @@ import { NavigationCategory } from '@/types/navigation';
 
 export async function getNavigationData(): Promise<NavigationCategory[]> {
   try {
+    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || process.env.STRAPI_URL || 'http://localhost:1337';
     const response = await fetch(
-      'http://localhost:1337/api/navigation-categories?populate=*&sort=order:asc',
+      `${strapiUrl}/api/navigation-categories?populate=*&sort=order:asc`,
       {
         next: { revalidate: 60 }, // Cache for 1 minute
       }
