@@ -96,9 +96,18 @@ export const Section: React.FC<SectionProps> = ({
         if (!Cmp) return null;
         if (cmp.__component === "image-gallery.image-gallery") {
           let images: { src: string; alt?: string }[] = [];
+          // Handle new simplified media structure
           if (Array.isArray(cmp.images)) {
             cmp.images.forEach((img: any) => {
-              if (img?.file) {
+              // Direct media files (new structure)
+              if (img?.url) {
+                images.push({
+                  src: imageLink(img.url),
+                  alt: img?.alternativeText || img?.name || 'Gallery image',
+                });
+              }
+              // Legacy structure with file property (for backward compatibility)
+              else if (img?.file) {
                 images.push({
                   src: imageLink(img.file.url),
                   alt: img?.alt || img.file.name,
@@ -108,8 +117,15 @@ export const Section: React.FC<SectionProps> = ({
           }
           // Use fullscreen for the first image gallery in non-inline sections
           const isFirstImageGallery = idx === 0;
-          const galleryVariant = (isInline || !isFirstImageGallery) ? "inline" : "fullscreen";
-          return <Cmp key={idx} {...cmp} images={images} autocycle={7} variant={galleryVariant} />;
+          const displayVariant = (isInline || !isFirstImageGallery) ? "inline" : "fullscreen";
+          return <Cmp 
+            key={idx} 
+            {...cmp} 
+            images={images} 
+            autocycle={7} 
+            variant={cmp.variant || "slider"} // Use Strapi variant (slider/grid)
+            displayVariant={displayVariant} // Keep existing fullscreen/inline logic
+          />;
         }
         if (cmp.__component === "teaser.teaser") {
           // Map Strapi teaser fields to Teaser props
