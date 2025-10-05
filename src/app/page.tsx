@@ -1,15 +1,33 @@
 import Page from "../components/Page";
+import ErrorDisplay from "../components/ErrorDisplay";
 import { fetchPageBySlug, fetchPages } from "../lib/sources/strapi/pages";
 import { getNavigationData } from "../lib/sources/strapi/navigation";
 
 export default async function Home() {
-  const { data } = await fetchPageBySlug('/');
+  const pageData = await fetchPageBySlug('/');
   const navigation = await getNavigationData();
   
+  // Check for Strapi connection error
+  if (pageData.error) {
+    return <ErrorDisplay error={pageData.error} />;
+  }
+  
   // Strapi v5 returns { data: [...] }
-  const pages = data || [];
+  const pages = pageData.data || [];
   // Assume first page for demo
   const page = pages[0] || {};
+  
+  // Handle case where no page is found
+  if (!page.id && pages.length === 0) {
+    return (
+      <ErrorDisplay 
+        title="Page Not Found"
+        message="The homepage could not be found. Please check your content management system."
+        error="No homepage configured"
+      />
+    );
+  }
+  
   const groups = page.groups || [];
   const header = page.header || null;
   const footer = page.footer || null;

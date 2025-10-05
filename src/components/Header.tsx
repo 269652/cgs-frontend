@@ -22,8 +22,8 @@ export interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) => (
   <header className="w-full bg-white">
     {/* Top bar with logo and contact info */}
-    <div className="shadow flex items-center justify-between px-8 py-6">
-      <div className="flex items-center">
+    <div className="shadow flex flex-col md:flex-row gap-6 items-center justify-between px-8 py-6">
+      <div className="flex flex-col md:flex-row items-center">
             
         {logo && (
         <Link href="/">
@@ -46,9 +46,9 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
     
     {/* Image gallery row */}
     {images && images.length > 0 && (
-      <div className="flex w-full gap-0 max-w-[calc(100vw-0rem)]" >
+      <div className="flex flex-col md:flex-row w-full gap-0 max-w-[calc(100vw-0rem)]" >
         {images.map((image, idx) => (
-          <div key={idx} className="flex-1 relative overflow-hidden">
+          <div key={idx} className="flex-1 relative overflow-hidden first:hidden md:first:block">
             <Image
               src={imageLink(image.url)}
               alt={image.name || `Header image ${idx + 1}`}
