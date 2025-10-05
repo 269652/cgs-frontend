@@ -71,7 +71,7 @@ export const Section: React.FC<SectionProps> = ({
           : 'min-h-ful min-h-screen p-2 md:p-8' // Full height and padding for standalone sections
       } ${!background && !bgImage ? 'bg-white dark:bg-gray-900' : ''}`}
       style={{
-        background: background || undefined,
+        backgroundColor: background || undefined,
         backgroundImage: bgImage ? `url(${bgImage.url})` : undefined,
         backgroundSize: bgImage ? "cover" : undefined,
       }}
@@ -176,7 +176,7 @@ const Group: React.FC<GroupProps> = async ({
   return (
     <div className="w-full">
       {backgroundImage && (
-        <div className="fixed inset-0 -z-1 h-screen top-0">
+        <div className="fixed inset-0 z-0 h-screen top-0">
           <Image
             src={getBackgroundImageUrl()!}
             alt="Background"
