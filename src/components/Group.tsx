@@ -17,7 +17,13 @@ const componentMap: Record<string, React.FC<any>> = {
 type SectionProps = {
   background: string;
   content: any[];
+  contentRelation?: Array<{
+    content: string;
+    variant?: "default" | "dark";
+    title?: string;
+  }>;
   bgImage?: any;
+  isInline?: boolean;
 };
 
 export type GroupProps = {
@@ -33,25 +39,58 @@ export type GroupProps = {
     bgColor?: string | null;
     bgImage?: any;
     content?: any[];
+    contentRelation?: Array<{
+      content: string;
+      variant?: "default" | "dark";
+      title?: string;
+    }>;
+    inline?: boolean;
   }>;
   header?: any;
   navigation?: NavigationCategory[];
 };
 
+/**
+ * Section component that can render either:
+ * 1. Dynamic zone content (components like image galleries, teasers, etc.)
+ * 2. Content relation (references to Content entries with markdown)
+ * 3. Both types together
+ */
 export const Section: React.FC<SectionProps> = ({
   background,
   content = [],
+  contentRelation = [],
   bgImage,
+  isInline = false,
 }) => {
   return (
     <div
-      className="min-h-ful min-h-screen  flex flex-col justify-center items-center relative p-2 md:p-8"
+      className={`flex flex-col justify-center items-center relative ${
+        isInline 
+          ? 'p-1 md:p-2 !px-8' // Minimal padding for inline usage
+          : 'min-h-ful min-h-screen p-2 md:p-8' // Full height and padding for standalone sections
+      }`}
       style={{
         background,
         backgroundImage: bgImage ? `url(${bgImage.url})` : undefined,
         backgroundSize: bgImage ? "cover" : undefined,
       }}
     >
+      {/* Render content relation items (Content entries) */}
+      {contentRelation && contentRelation.length > 0 && (
+        <div className="w-full">
+          {contentRelation.map((item, idx) => (
+            <Content
+              key={`content-${idx}`}
+              content={item.content}
+              variant={item.variant || "default"}
+              title={item.title}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Render dynamic zone content (components) */}
       {content.map((cmp, idx) => {
         const Cmp = componentMap[cmp.__component];
         if (!Cmp) return null;
@@ -127,6 +166,10 @@ const Group: React.FC<GroupProps> = async ({
     return imageLink(backgroundImage.url);
   };
 
+  // If there's content, sections should be treated as inline (part of content flow)
+  const hasContent = content && content.length > 0;
+  const sectionsAreInline = hasContent;
+
   return (
     <div className="w-full">
       {backgroundImage && (
@@ -159,7 +202,9 @@ const Group: React.FC<GroupProps> = async ({
             key={idx}
             background={section.bgColor || section.background || "#FFF"}
             content={section.content || []}
+            contentRelation={section.contentRelation || []}
             bgImage={section.bgImage}
+            isInline={section.inline !== undefined ? section.inline : sectionsAreInline} // Use backend inline checkbox or fallback to auto-detection
           />
         ))}
       </div>

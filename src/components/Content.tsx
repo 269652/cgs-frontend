@@ -1,6 +1,9 @@
 import React from "react";
 import { remark } from "remark";
-import html from "remark-html";
+import remarkRehype from "remark-rehype";
+import rehypeRaw from "rehype-raw";
+import rehypeStringify from "rehype-stringify";
+import remarkGfm from "remark-gfm";
 
 interface ContentProps {
   content: string; // Markdown content
@@ -9,9 +12,12 @@ interface ContentProps {
 }
 
 const Content: React.FC<ContentProps> = async ({ content, variant = 'default', title }) => {
-  // Process markdown on server
+  // Process markdown on server with HTML support
   const processedContent = await remark()
-    .use(html)
+    .use(remarkGfm) // GitHub Flavored Markdown support
+    .use(remarkRehype, { allowDangerousHtml: true }) // Convert markdown to HTML AST
+    .use(rehypeRaw) // Parse raw HTML in markdown
+    .use(rehypeStringify) // Convert HTML AST to string
     .process(content);
   
   const htmlContent = processedContent.toString();
