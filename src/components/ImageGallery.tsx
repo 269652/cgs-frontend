@@ -19,7 +19,8 @@ type ImageGalleryProps = {
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ctaLink, ctaLabel, autocycle }) => (
   <div
-    className="relative w-full max-w-full rounded-lg h-[calc(100vh-8px)] lg:h-[calc(100vh-4rem)] "
+    className="relative w-full max-w-full rounded-lg h-[calc(100vh-8px)] lg:h-[calc(100vh-4rem)] overflow-hidden"
+    style={{ maxWidth: '100vw', width: '100%', contain: 'layout' }}
   >
     {(title || subtitle) && (
       <div
@@ -57,38 +58,70 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ct
         )}
       </div>
     )}
-    <Swiper
-      modules={[Navigation, Pagination, Autoplay]}
-      navigation
-      pagination={{ clickable: true }}
-      spaceBetween={0}
-      slidesPerView={1}
-      style={{ width: '100%', height: '100%', borderRadius: '8px' }}
-      autoplay={autocycle ? { delay: autocycle * 1000, disableOnInteraction: false } : false}
+    <div 
+      className="w-full h-full max-w-screen"
+      style={{ 
+        width: '100%', 
+        height: '100%', 
+        maxWidth: '100%',
+        overflow: 'hidden'
+      }}
     >
-      {images.map((img, idx) => (
-        <SwiperSlide
-          key={idx}
-          className="flex items-center justify-center w-full h-[60vw] min-h-[320px] md:h-[455px]"
-          style={{ height: '100%', minHeight: '320px' }}
-        >
-          <Image
-            src={img?.src}
-            alt={img?.alt || `Image ${idx + 1}`}
-            fill
-            style={{ objectFit: 'cover', borderRadius: '8px' }}
-            sizes="100vw"
-            priority={idx === 0}
-          />
-        </SwiperSlide>
-      ))}
-    </Swiper>
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        navigation
+        pagination={{ clickable: true }}
+        spaceBetween={0}
+        slidesPerView={1}
+        style={{ 
+          width: '100%', 
+          height: '100%', 
+          borderRadius: '8px',
+          maxWidth: '100%',
+          minWidth: '0'
+        }}
+        autoplay={autocycle ? { delay: autocycle * 1000, disableOnInteraction: false } : false}
+        className="!w-full !max-w-full"
+        watchOverflow={true}
+        observer={true}
+        observeParents={true}
+      >
+        {images.map((img, idx) => (
+          <SwiperSlide
+            key={idx}
+            className="swiper-slide"
+            style={{ 
+              height: '100%', 
+              minHeight: '320px', 
+              width: '100%',
+              maxWidth: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <div 
+              className="relative w-full h-full"
+              style={{ width: '100%', height: '100%' }}
+            >
+              <Image
+                src={img?.src}
+                alt={img?.alt || `Image ${idx + 1}`}
+                fill
+                style={{ objectFit: 'cover', borderRadius: '8px' }}
+                sizes="100vw"
+                priority={idx === 0}
+              />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
     {ctaLink && ctaLabel && (
       <a
         href={ctaLink}
         className="absolute left-8 bottom-8 z-10 bg-accent text-white px-6 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition"
         style={{ left: '2vw', bottom: '2vw', fontSize: 'clamp(1rem, 4vw, 1.25rem)' }}
-        target="_blank"
         rel="noopener noreferrer"
       >
         {ctaLabel}

@@ -2,7 +2,11 @@ import React from "react";
 import ImageGallery from "./ImageGallery";
 import Teaser from "./Teaser";
 import TripleTease from "./TripleTease";
+import Content from "./Content";
 import { imageLink } from "@/lib/imageLink";
+import Header from "./Header";
+import { NavigationCategory } from "@/types/navigation";
+import Image from "next/image";
 
 const componentMap: Record<string, React.FC<any>> = {
   "image-gallery.image-gallery": ImageGallery,
@@ -16,14 +20,22 @@ type SectionProps = {
   bgImage?: any;
 };
 
-type GroupProps = {
-  backgroundImage?: string | null;
-  sections: Array<{
+export type GroupProps = {
+  title?: string;
+  backgroundImage?: string | { url: string } | null;
+  content?: Array<{
+    content: string; // Markdown content to be processed
+    variant?: "default" | "dark";
+    title?: string;
+  }>;
+  sections?: Array<{
     background?: string | null;
     bgColor?: string | null;
     bgImage?: any;
     content?: any[];
   }>;
+  header?: any;
+  navigation?: NavigationCategory[];
 };
 
 export const Section: React.FC<SectionProps> = ({
@@ -33,9 +45,9 @@ export const Section: React.FC<SectionProps> = ({
 }) => {
   return (
     <div
-      className="min-h-full h-auto p-1 md:p-8 flex flex-col justify-center items-center"
+      className="min-h-ful min-h-screen  flex flex-col justify-center items-center relative p-2 md:p-8"
       style={{
-        background: background || undefined,
+        background,
         backgroundImage: bgImage ? `url(${bgImage.url})` : undefined,
         backgroundSize: bgImage ? "cover" : undefined,
       }}
@@ -101,27 +113,58 @@ export const Section: React.FC<SectionProps> = ({
   );
 };
 
-const Group: React.FC<GroupProps> = ({ backgroundImage, sections }: any) => (
-  <div
-    className="w-screen max-h-screen"
-    style={{
-      backgroundImage: backgroundImage
-        ? `url(${imageLink(backgroundImage.url)})`
-        : undefined,
-      backgroundSize: backgroundImage ? "cover" : undefined,
-    }}
-  >
-    <div className="h-screen overflow-y-auto">
-      {sections.map((section: any, idx: number) => (
-        <Section
-          key={idx}
-          background={section.bgColor || section.background || "#FFF"}
-          content={section.content || []}
-          bgImage={section.bgImage}
-        />
-      ))}
+const Group: React.FC<GroupProps> = async ({
+  title,
+  backgroundImage,
+  content,
+  sections,
+  header,
+  navigation,
+}) => {
+  const getBackgroundImageUrl = () => {
+    if (!backgroundImage) return undefined;
+    if (typeof backgroundImage === "string") return backgroundImage;
+    return imageLink(backgroundImage.url);
+  };
+
+  return (
+    <div className="w-full">
+      {backgroundImage && (
+        <div className="fixed inset-0 -z-1 h-screen top-0">
+          <Image
+            src={getBackgroundImageUrl()!}
+            alt="Background"
+            fill
+            style={{ objectFit: "cover", zIndex: -1 }}
+          />
+        </div>
+      )}
+      <div className="overflow-y-auto">
+        {/* Render content using Content component */}
+        {content && content.length > 0 && (
+          <div>
+            {content.map((item, idx) => (
+              <Content
+                key={idx}
+                content={item.content}
+                variant={item.variant || "default"}
+                title={item.title}
+              />
+            ))}
+          </div>
+        )}
+
+        {sections?.map((section: any, idx: number) => (
+          <Section
+            key={idx}
+            background={section.bgColor || section.background || "#FFF"}
+            content={section.content || []}
+            bgImage={section.bgImage}
+          />
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Group;
