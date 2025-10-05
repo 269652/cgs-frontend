@@ -14,8 +14,8 @@ export default async function Home({ params }: any) {
   const navigation = await getNavigationData();
   console.log("page", pages, "GROUPS", groups, navigation);
   return (
-    <div className="font-sans items-center justify-items-center min-h-screen ">
-      <main className="flex flex-col items-center ">
+    <div className="font-sans items-center justify-items-center min-h-screen">
+      <main className="flex flex-col items-center w-full">
         <Page groups={groups} navigation={navigation} {...page} />
       </main>
     </div>

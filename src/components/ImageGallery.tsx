@@ -15,20 +15,39 @@ type ImageGalleryProps = {
   ctaLink?: string;
   ctaLabel?: string;
   autocycle?: number; // interval in seconds
+  variant?: 'fullscreen' | 'inline'; // Add variant prop
 };
 
-const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ctaLink, ctaLabel, autocycle }) => (
-  <div
-    className="relative w-full max-w-full rounded-lg h-[calc(100vh-8px)] lg:h-[calc(100vh-4rem)] overflow-hidden"
-    style={{ maxWidth: '100vw', width: '100%', contain: 'layout' }}
-  >
+const ImageGallery: React.FC<ImageGalleryProps> = ({ 
+  images, 
+  title, 
+  subtitle, 
+  ctaLink, 
+  ctaLabel, 
+  autocycle,
+  variant = 'inline' // Default to inline for content usage
+}) => {
+  const isFullscreen = variant === 'fullscreen';
+  return (
+    <div
+      className={`relative rounded-lg overflow-hidden ${
+        isFullscreen 
+          ? 'w-full h-[calc(100vh-8px)] lg:h-[calc(100vh-4rem)]' 
+          : 'w-full h-[300px] md:h-[400px] my-6'
+      }`}
+      style={{ 
+        maxWidth: '100%'
+      }}
+    >
     {(title || subtitle) && (
       <div
-        className="absolute left-8 top-8 z-10 text-white drop-shadow-lg"
+        className={`absolute z-10 text-white drop-shadow-lg ${
+          isFullscreen ? 'left-8 top-8' : 'left-4 top-4'
+        }`}
         style={{
-          left: '2vw',
-          top: '2vw',
-          width: '90vw',
+          left: isFullscreen ? '2vw' : '1rem',
+          top: isFullscreen ? '2vw' : '1rem',
+          width: isFullscreen ? '90vw' : 'calc(100% - 2rem)',
           maxWidth: '100%',
         }}
       >
@@ -36,7 +55,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ct
           <h2
             className="h1 font-bold mb-2"
             style={{
-              fontSize: 'clamp(2rem, 7vw, 3rem)',
+              fontSize: isFullscreen ? 'clamp(2rem, 7vw, 3rem)' : 'clamp(1.25rem, 4vw, 2rem)',
               lineHeight: '1.1',
               textShadow: '0 2px 8px rgba(0,0,0,0.25)',
             }}
@@ -48,8 +67,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ct
           <p
             className="h2 mb-2"
             style={{
-              fontSize: 'clamp(1rem, 4vw, 1.5rem)',
-              maxWidth: '80vw',
+              fontSize: isFullscreen ? 'clamp(1rem, 4vw, 1.5rem)' : 'clamp(0.875rem, 3vw, 1.125rem)',
+              maxWidth: isFullscreen ? '80vw' : '90%',
               textShadow: '0 2px 8px rgba(0,0,0,0.15)',
             }}
           >
@@ -59,12 +78,10 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ct
       </div>
     )}
     <div 
-      className="w-full h-full max-w-screen"
+      className="w-fit h-full max-w-full"
       style={{ 
         width: '100%', 
-        height: '100%', 
-        maxWidth: '100%',
-        overflow: 'hidden'
+        height: '100%'
       }}
     >
       <Swiper
@@ -75,44 +92,23 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ct
         slidesPerView={1}
         style={{ 
           width: '100%', 
-          height: '100%', 
-          borderRadius: '8px',
-          maxWidth: '100%',
-          minWidth: '0'
+          height: '100%'
         }}
         autoplay={autocycle ? { delay: autocycle * 1000, disableOnInteraction: false } : false}
-        className="!w-full !max-w-full"
-        watchOverflow={true}
-        observer={true}
-        observeParents={true}
       >
         {images.map((img, idx) => (
           <SwiperSlide
             key={idx}
-            className="swiper-slide"
-            style={{ 
-              height: '100%', 
-              minHeight: '320px', 
-              width: '100%',
-              maxWidth: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
+            className="relative w-full h-full"
           >
-            <div 
-              className="relative w-full h-full"
-              style={{ width: '100%', height: '100%' }}
-            >
-              <Image
-                src={img?.src}
-                alt={img?.alt || `Image ${idx + 1}`}
-                fill
-                style={{ objectFit: 'cover', borderRadius: '8px' }}
-                sizes="100vw"
-                priority={idx === 0}
-              />
-            </div>
+            <Image
+              src={img?.src}
+              alt={img?.alt || `Image ${idx + 1}`}
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes={isFullscreen ? "100vw" : "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"}
+              priority={idx === 0}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
@@ -120,14 +116,21 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle, ct
     {ctaLink && ctaLabel && (
       <a
         href={ctaLink}
-        className="absolute left-8 bottom-8 z-10 bg-accent text-white px-6 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition"
-        style={{ left: '2vw', bottom: '2vw', fontSize: 'clamp(1rem, 4vw, 1.25rem)' }}
+        className={`absolute z-10 bg-accent text-white px-6 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition ${
+          isFullscreen ? 'left-8 bottom-8' : 'left-4 bottom-4'
+        }`}
+        style={{ 
+          left: isFullscreen ? '2vw' : '1rem', 
+          bottom: isFullscreen ? '2vw' : '1rem', 
+          fontSize: isFullscreen ? 'clamp(1rem, 4vw, 1.25rem)' : '1rem'
+        }}
         rel="noopener noreferrer"
       >
         {ctaLabel}
       </a>
     )}
   </div>
-);
+  );
+};
 
 export default ImageGallery;

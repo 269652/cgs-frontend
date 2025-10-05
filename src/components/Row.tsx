@@ -12,7 +12,7 @@ const Row: React.FC<RowProps> = ({ groups, className }) => (
     <div className={`flex justify-start w-full ${className || ""}`}>
       {/* First group - 2/3 width */}
       {groups[0] && (
-        <div className="max-w-2/3 pr-8 ">
+        <div className="max-w-2/3 pr-8 w-2/3 overflow-hidden">
           <Group {...groups[0]} />
         </div>
       )}

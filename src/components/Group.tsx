@@ -67,7 +67,7 @@ export const Section: React.FC<SectionProps> = ({
               }
             });
           }
-          return <Cmp key={idx} {...cmp} images={images} autocycle={7} />;
+          return <Cmp key={idx} {...cmp} images={images} autocycle={7} variant="inline" />;
         }
         if (cmp.__component === "teaser.teaser") {
           // Map Strapi teaser fields to Teaser props
@@ -139,7 +139,7 @@ const Group: React.FC<GroupProps> = async ({
           />
         </div>
       )}
-      <div className="overflow-y-auto">
+      <div className="overflow-y-auto w-full">
         {/* Render content using Content component */}
         {content && content.length > 0 && (
           <div>
