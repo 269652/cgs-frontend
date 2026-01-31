@@ -49,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
       <div className="flex flex-col md:flex-row w-full gap-0 max-w-[calc(100vw-0rem)]" >
         {images.map((image, idx) => (
           <div key={idx} className="flex-1 relative overflow-hidden first:hidden md:first:block">
-            <Image
+            <img
               src={imageLink(image.url)}
               alt={image.name || `Header image ${idx + 1}`}
               width={400}
