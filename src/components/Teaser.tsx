@@ -16,13 +16,13 @@ const ArticleClassic: React.FC<TeaserProps> = ({ title, image, copy, ctaLink, ct
     style={{ width: '100%', textAlign: 'center' }}
   >
     <div className="w-full mb-4" style={{ display: 'flex', justifyContent: 'center' }}>
-      <Image
+      {image && <Image
         src={image?.src}
         alt={image?.alt || title}
         width={image?.width || 320}
         height={image?.height || 180}
         style={{ borderRadius: 8, objectFit: 'cover', width: '100%', height: 'auto', maxHeight: '220px' }}
-      />
+      />}
     </div>
     <h2 className="text-gray-900 dark:text-gray-100" style={{ fontSize: 'clamp(1.25rem, 6vw, 1.5rem)', fontWeight: 500, margin: '0.5rem 0 1rem' }}>{title}</h2>
     <p className="text-gray-700 dark:text-gray-300" style={{ fontSize: 'clamp(1rem, 4vw, 1.1rem)', marginBottom: 16 }}>{copy}</p>
