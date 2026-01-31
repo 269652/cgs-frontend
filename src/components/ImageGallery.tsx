@@ -28,7 +28,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   ctaLabel, 
   autocycle,
   variant = 'slider',
-  displayVariant = 'inline' // Default to inline for content usage
+  displayVariant = 'fullscreen' // Default to inline for content usage
 }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);

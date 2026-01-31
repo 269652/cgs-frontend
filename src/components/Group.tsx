@@ -72,7 +72,7 @@ export const Section: React.FC<SectionProps> = ({
       } ${!background && !bgImage ? 'bg-white dark:bg-gray-900' : ''}`}
       style={{
         backgroundColor: background || undefined,
-        backgroundImage: bgImage ? `url(${bgImage.url})` : undefined,
+        backgroundImage: bgImage ? `url(${imageLink(bgImage)})` : undefined,
         backgroundSize: bgImage ? "cover" : undefined,
       }}
     >
@@ -190,18 +190,18 @@ const Group: React.FC<GroupProps> = async ({
   const sectionsAreInline = hasContent;
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${backgroundImage ? 'relative' : ''}`}>
       {backgroundImage && (
-        <div className="fixed inset-0 z-0 h-screen top-0">
+        <div className="absolute inset-0 z-0">
           <Image
             src={getBackgroundImageUrl()!}
             alt="Background"
             fill
-            style={{ objectFit: "cover", zIndex: -1 }}
+            style={{ objectFit: "cover" }}
           />
         </div>
       )}
-      <div className="overflow-y-auto w-full">
+      <div className="relative z-10 w-full">
         {/* Render content using Content component */}
         {content && content.length > 0 && (
           <div>
