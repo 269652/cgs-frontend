@@ -72,7 +72,7 @@ export const Section: React.FC<SectionProps> = ({
       } ${!background && !bgImage ? 'bg-white dark:bg-gray-900' : ''}`}
       style={{
         backgroundColor: background || undefined,
-        backgroundImage: bgImage ? `url(${imageLink(bgImage)})` : undefined,
+        backgroundImage: bgImage ? `url(${imageLink(bgImage.url)})` : undefined,
         backgroundSize: bgImage ? "cover" : undefined,
       }}
     >
