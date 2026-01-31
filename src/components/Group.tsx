@@ -192,7 +192,7 @@ const Group: React.FC<GroupProps> = async ({
   return (
     <div className={`w-full ${backgroundImage ? 'relative' : ''}`}>
       {backgroundImage && (
-        <div className="absolute inset-0 z-0">
+        <div className="fixed inset-0 z-0">
           <Image
             src={getBackgroundImageUrl()!}
             alt="Background"
