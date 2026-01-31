@@ -68,7 +68,7 @@ export const Section: React.FC<SectionProps> = ({
       className={`flex flex-col justify-center items-center relative ${
         isInline 
           ? 'p-1 md:p-2 !px-8' // Minimal padding for inline usage
-          : 'min-h-ful min-h-screen p-2 md:p-8' // Full height and padding for standalone sections
+          : 'min-h-screen p-2 md:p-8' // Full height and padding for standalone sections
       } ${!background && !bgImage ? 'bg-white dark:bg-gray-900' : ''}`}
       style={{
         backgroundColor: background || undefined,
