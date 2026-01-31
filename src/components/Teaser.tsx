@@ -63,7 +63,7 @@ export interface TeaserProps {
 const TeaserClassic: React.FC<TeaserProps> = ({ title, image, copy, ctaLink, ctaLabel }) => (
   <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto" }}>
     <h2 className="text-gray-900 dark:text-gray-100" style={{ fontSize: "2rem", fontWeight: 400, margin: "2rem 0 0.5rem" }}>{title}</h2>
-    <Image src={image?.src} alt={image?.alt || title} width={image.width || 700} height={image.height || 400} style={{ borderRadius: 8, margin: "1rem auto" }} />
+    {image && <Image src={image?.src} alt={image?.alt || title} width={image.width || 700} height={image.height || 400} style={{ borderRadius: 8, margin: "1rem auto" }} />}
     <p className="text-gray-700 dark:text-gray-300" style={{ margin: "1.5rem 0", fontSize: "1rem" }}>{copy}</p>
     {ctaLink && ctaLabel && (
       <a className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white" href={ctaLink} style={{ display: "inline-block", padding: "0.75rem 2rem", borderRadius: 6, fontWeight: 500, textDecoration: "none", marginTop: 16 }}>{ctaLabel}</a>
