@@ -4,6 +4,7 @@ import Image from "next/image";
 export type TeaserVariant =
   | "classic"
   | "modern"
+  | "large"
   | "articleClassic"
   | "articleModern"
   | "text";
@@ -265,9 +266,63 @@ const TeaserModern: React.FC<TeaserProps> = ({
   </div>
 );
 
+const TeaserLarge: React.FC<TeaserProps> = ({
+  title,
+  image,
+  copy,
+  ctaLink,
+  ctaLabel,
+}) => (
+  <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
+    <div className="absolute inset-0 bg-black/40" />
+    <div className="relative z-10 text-center px-8 max-w-3xl">
+      <h2
+        className="text-white font-bold mb-4"
+        style={{
+          fontSize: "clamp(2rem, 7vw, 3.5rem)",
+          lineHeight: "1.1",
+          textShadow: "0 2px 8px rgba(0,0,0,0.3)",
+        }}
+      >
+        {title}
+      </h2>
+      {image && (
+        <Image
+          src={image.src}
+          alt={image.alt || title}
+          fill
+          style={{ objectFit: "cover" }}
+          sizes="100vw"
+          priority
+        />
+      )}
+      {copy && (
+        <p
+          className="text-white/90 mb-6"
+          style={{
+            fontSize: "clamp(1rem, 4vw, 1.5rem)",
+            textShadow: "0 2px 8px rgba(0,0,0,0.2)",
+          }}
+        >
+          {copy}
+        </p>
+      )}
+      {ctaLink && ctaLabel && (
+        <a
+          href={ctaLink}
+          className="inline-block bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg shadow-lg transition font-semibold text-lg"
+        >
+          {ctaLabel}
+        </a>
+      )}
+    </div>
+  </div>
+);
+
 const variantMap: Record<TeaserVariant, React.FC<TeaserProps>> = {
   classic: TeaserClassic,
   modern: TeaserModern,
+  large: TeaserLarge,
   articleClassic: ArticleClassic,
   articleModern: ArticleModern,
   text: TeaserText,
