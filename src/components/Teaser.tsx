@@ -272,52 +272,52 @@ const TeaserLarge: React.FC<TeaserProps> = ({
   copy,
   ctaLink,
   ctaLabel,
-}) => (
-  <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
-    <div className="absolute inset-0 bg-black/40" />
-    <div className="relative z-10 text-center px-8 max-w-3xl">
-      <h2
-        className="text-white font-bold mb-4"
+}) =>  (
+  <div
+    style={{ textAlign: "center", maxWidth: 700, margin: "0 auto" }}
+    className="flex flex-col items-center"
+  >
+    <h2
+      className="text-gray-900 dark:text-gray-100"
+      style={{ fontSize: "2rem", fontWeight: 400, margin: "2rem 0 0.5rem" }}
+    >
+      {title}
+    </h2>
+    {image && (
+      <Image
+        src={image?.src}
+        alt={image?.alt || title}
+        width={image?.width || 700}
+        height={image?.height || 400}
+        style={{ height: "auto", width: "100%", borderRadius: 8, margin: "1rem auto" }}
+      />
+    )}
+    <p
+      className="text-gray-700 dark:text-gray-300"
+      style={{ margin: "1.5rem 0", fontSize: "1rem" }}
+    >
+      {copy}
+    </p>
+    <span className="flex-1"></span>
+    {ctaLink && ctaLabel && (
+      <a
+        className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white mt-auto"
+        href={ctaLink}
         style={{
-          fontSize: "clamp(2rem, 7vw, 3.5rem)",
-          lineHeight: "1.1",
-          textShadow: "0 2px 8px rgba(0,0,0,0.3)",
+          display: "inline-block",
+          padding: "0.75rem 2rem",
+          borderRadius: 6,
+          fontWeight: 500,
+          textDecoration: "none",
+          marginTop: 16,
         }}
       >
-        {title}
-      </h2>
-      {image && (
-        <Image
-          src={image.src}
-          alt={image.alt || title}
-          fill
-          style={{ objectFit: "cover" }}
-          sizes="100vw"
-          priority
-        />
-      )}
-      {copy && (
-        <p
-          className="text-white/90 mb-6"
-          style={{
-            fontSize: "clamp(1rem, 4vw, 1.5rem)",
-            textShadow: "0 2px 8px rgba(0,0,0,0.2)",
-          }}
-        >
-          {copy}
-        </p>
-      )}
-      {ctaLink && ctaLabel && (
-        <a
-          href={ctaLink}
-          className="inline-block bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg shadow-lg transition font-semibold text-lg"
-        >
-          {ctaLabel}
-        </a>
-      )}
-    </div>
+        {ctaLabel}
+      </a>
+    )}
   </div>
 );
+
 
 const variantMap: Record<TeaserVariant, React.FC<TeaserProps>> = {
   classic: TeaserClassic,
