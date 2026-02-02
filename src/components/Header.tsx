@@ -22,8 +22,8 @@ export interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) => (
   <header className="w-full bg-white dark:bg-gray-900">
     {/* Top bar with logo and contact info */}
-    <div className="shadow dark:shadow-gray-800 flex flex-col md:flex-row gap-6 items-center justify-between px-8 py-6">
-      <div className="flex flex-col md:flex-row items-center">
+    <div className="shadow dark:shadow-gray-800 flex flex-col sm:flex-row gap-6 items-center justify-between px-8 py-6">
+      <div className="flex flex-col sm:flex-row items-center">
             
         {logo && (
         <Link href="/">
