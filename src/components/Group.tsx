@@ -2,6 +2,7 @@ import React from "react";
 import ImageGallery from "./ImageGallery";
 import Teaser from "./Teaser";
 import TripleTease from "./TripleTease";
+import Container from "./Container";
 import Content from "./Content";
 import { imageLink } from "@/lib/imageLink";
 import Header from "./Header";
@@ -92,6 +93,96 @@ export const Section: React.FC<SectionProps> = ({
 
       {/* Render dynamic zone content (components) */}
       {content.map((cmp, idx) => {
+        // Handle Container first (it's not in componentMap, renders children)
+        if (cmp.__component === "container.container") {
+          const children = Array.isArray(cmp.children) ? cmp.children : [];
+          return (
+            <Container key={idx}>
+              {children.map((child: any, childIdx: number) => {
+                const ChildCmp = componentMap[child.__component];
+                if (!ChildCmp) return null;
+                if (child.__component === "image-gallery.image-gallery") {
+                  let images: { src: string; alt?: string }[] = [];
+                  if (Array.isArray(child.images)) {
+                    child.images.forEach((img: any) => {
+                      if (img?.url) {
+                        images.push({
+                          src: imageLink(img.url),
+                          alt: img?.alternativeText || img?.name || 'Gallery image',
+                        });
+                      } else if (img?.file) {
+                        images.push({
+                          src: imageLink(img.file.url),
+                          alt: img?.alt || img.file.name,
+                        });
+                      }
+                    });
+                  }
+                  return <ChildCmp key={childIdx} {...child} images={images} variant={child.variant || "slider"} displayVariant="inline" />;
+                }
+                if (child.__component === "teaser.teaser") {
+                  // Handle multiple images (new) or single image (legacy)
+                  let teaserImages: { src: string; alt?: string }[] | undefined;
+                  if (Array.isArray(child.images) && child.images.length > 0) {
+                    teaserImages = child.images.map((img: any) => ({
+                      src: imageLink(img.url),
+                      alt: img.alternativeText || img.name || child.title,
+                    }));
+                  }
+                  const teaserProps = {
+                    variant: child.variant,
+                    title: child.title,
+                    copy: child.copy,
+                    ctaLink: child.ctaLink,
+                    ctaLabel: child.ctaLabel,
+                    className: child.className,
+                    images: teaserImages,
+                    // Legacy single image fallback
+                    image:
+                      child.image && child.image.url
+                        ? {
+                            src: imageLink(child.image.url),
+                            alt: child.image.name || child.title,
+                          }
+                        : undefined,
+                  };
+                  return <ChildCmp key={childIdx} {...teaserProps} />;
+                }
+                if (child.__component === "triple-tease.triple-tease") {
+                  const teasers = Array.isArray(child.teasers)
+                    ? child.teasers.map((teaser: any) => {
+                        let teaserImages: { src: string; alt?: string }[] | undefined;
+                        if (Array.isArray(teaser.images) && teaser.images.length > 0) {
+                          teaserImages = teaser.images.map((img: any) => ({
+                            src: imageLink(img.url),
+                            alt: img.alternativeText || img.name || teaser.title,
+                          }));
+                        }
+                        return {
+                          variant: teaser.variant,
+                          title: teaser.title,
+                          copy: teaser.copy,
+                          ctaLink: teaser.ctaLink,
+                          ctaLabel: teaser.ctaLabel,
+                          images: teaserImages,
+                          image:
+                            teaser.image && teaser.image.url
+                              ? {
+                                  src: imageLink(teaser.image.url),
+                                  alt: teaser.image.name || teaser.title,
+                                }
+                              : undefined,
+                        };
+                      })
+                    : [];
+                  return <ChildCmp key={childIdx} title={child.title} teasers={teasers} />;
+                }
+                return <ChildCmp key={childIdx} {...child} />;
+              })}
+            </Container>
+          );
+        }
+
         const Cmp = componentMap[cmp.__component];
         if (!Cmp) return null;
         if (cmp.__component === "image-gallery.image-gallery") {
@@ -128,6 +219,14 @@ export const Section: React.FC<SectionProps> = ({
           />;
         }
         if (cmp.__component === "teaser.teaser") {
+          // Handle multiple images (new) or single image (legacy)
+          let teaserImages: { src: string; alt?: string }[] | undefined;
+          if (Array.isArray(cmp.images) && cmp.images.length > 0) {
+            teaserImages = cmp.images.map((img: any) => ({
+              src: imageLink(img.url),
+              alt: img.alternativeText || img.name || cmp.title,
+            }));
+          }
           // Map Strapi teaser fields to Teaser props
           const teaserProps = {
             variant: cmp.variant,
@@ -135,6 +234,9 @@ export const Section: React.FC<SectionProps> = ({
             copy: cmp.copy,
             ctaLink: cmp.ctaLink,
             ctaLabel: cmp.ctaLabel,
+            className: cmp.className,
+            images: teaserImages,
+            // Legacy single image fallback
             image:
               cmp.image && cmp.image.url
                 ? {
@@ -148,20 +250,30 @@ export const Section: React.FC<SectionProps> = ({
         if (cmp.__component === "triple-tease.triple-tease") {
           // Map Strapi triple tease fields to TripleTease props
           const teasers = Array.isArray(cmp.teasers)
-            ? cmp.teasers.map((teaser: any) => ({
-                variant: teaser.variant,
-                title: teaser.title,
-                copy: teaser.copy,
-                ctaLink: teaser.ctaLink,
-                ctaLabel: teaser.ctaLabel,
-                image:
-                  teaser.image && teaser.image.url
-                    ? {
-                        src: imageLink(teaser.image.url),
-                        alt: teaser.image.name || teaser.title,
-                      }
-                    : undefined,
-              }))
+            ? cmp.teasers.map((teaser: any) => {
+                let teaserImages: { src: string; alt?: string }[] | undefined;
+                if (Array.isArray(teaser.images) && teaser.images.length > 0) {
+                  teaserImages = teaser.images.map((img: any) => ({
+                    src: imageLink(img.url),
+                    alt: img.alternativeText || img.name || teaser.title,
+                  }));
+                }
+                return {
+                  variant: teaser.variant,
+                  title: teaser.title,
+                  copy: teaser.copy,
+                  ctaLink: teaser.ctaLink,
+                  ctaLabel: teaser.ctaLabel,
+                  images: teaserImages,
+                  image:
+                    teaser.image && teaser.image.url
+                      ? {
+                          src: imageLink(teaser.image.url),
+                          alt: teaser.image.name || teaser.title,
+                        }
+                      : undefined,
+                };
+              })
             : [];
           return <Cmp key={idx} title={cmp.title} teasers={teasers} />;
         }

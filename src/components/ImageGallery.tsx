@@ -54,7 +54,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   // Grid variant component - Modern masonry-style layout
   const GridGallery = () => (
-    <div className={`relative ${isFullscreen ? 'min-h-screen p-8' : 'my-6 px-4'}`}>
+    <div className={`relative ${isFullscreen ? 'min-h-screen p-8' : 'px-4'}`}>
       {/* Title and subtitle overlay for grid */}
       {(title || subtitle) && (
         <div className={`mb-8 ${isFullscreen ? 'text-center' : ''}`}>
@@ -149,7 +149,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       className={`relative overflow-hidden ${
         isFullscreen 
           ? 'w-full h-[calc(100vh-4rem)] min-h-[calc(100svh-1rem)] md:min-h-[calc(100vh-4rem)] rounded-lg' 
-          : 'w-full h-[300px] md:h-[400px] my-6 rounded-lg'
+          : 'w-full h-[300px] md:h-[400px] rounded-lg'
       }`}
       style={{ 
         maxWidth: isFullscreen ? 'none' : '100%'

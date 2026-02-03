@@ -11,7 +11,9 @@ export interface HeaderProps {
     url: string;
     name?: string;
   };
-  impressum?: string;
+  impressum?: {
+    content: string;
+  };
   images?: Array<{
     url: string;
     name?: string;
@@ -40,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
         )}
       </div>
       {impressum && (
-        <Impressum text={impressum} />
+        <Impressum text={impressum.content} />
       )}
     </div>
     

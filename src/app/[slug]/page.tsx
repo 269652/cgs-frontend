@@ -1,9 +1,22 @@
+import { Metadata } from "next";
 import { fetchPageBySlug } from "@/lib/sources/strapi/pages";
 import { getNavigationData } from "@/lib/sources/strapi/navigation";
 import Page from "@/components/Page";
 import ErrorDisplay from "@/components/ErrorDisplay";
+import { buildMetadata } from "@/lib/metadata";
 
-export default async function Home({ params }: any) {
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const pageData = await fetchPageBySlug(slug);
+  const page = pageData.data?.[0];
+  return buildMetadata(page?.siteMetadata);
+}
+
+export default async function Home({ params }: Props) {
   console.log("SLUG", (await params).slug);
   const pageData = await fetchPageBySlug((await params).slug);
   const navigation = await getNavigationData();

@@ -31,6 +31,7 @@ const Page: React.FC<PageProps> = ({
   rows,
   navigation,
 }) => {
+  console.log ("PAGE FOOTER", footer)
   const renderPageContent = () => {
     if (pageContent && pageContent.length > 0) {
       return pageContent.map((component, idx) => {

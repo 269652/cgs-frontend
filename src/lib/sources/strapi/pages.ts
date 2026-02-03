@@ -2,6 +2,21 @@ import axios from 'axios';
 
 const populateQuery = {
   populate: {
+    header: {
+      populate: {
+        logo: '*',
+        images: '*'
+      }
+    },
+    footer: '*',
+    siteMetadata: {
+      populate: {
+        favicon: '*',
+        ogImage: '*',
+        twitterImage: '*',
+        appleTouchIcon: '*'
+      }
+    },
     pageContent: {
       populate: {
         groups: {
