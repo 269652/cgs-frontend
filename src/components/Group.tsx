@@ -70,7 +70,7 @@ export const Section: React.FC<SectionProps> = ({
         isInline 
           ? 'p-1 md:p-2 !px-8' // Minimal padding for inline usage
           : 'min-h-screen p-2 md:p-8' // Full height and padding for standalone sections
-      } ${!background && !bgImage ? 'bg-white dark:bg-gray-900' : ''}`}
+      } ${!background && !bgImage ? ' dark:bg-gray-800' : ''}`}
       style={{
         backgroundColor: background || undefined,
         backgroundImage: bgImage ? `url(${imageLink(bgImage.url)})` : undefined,
@@ -302,7 +302,7 @@ const Group: React.FC<GroupProps> = async ({
   const sectionsAreInline = hasContent;
 
   return (
-    <div className={`w-full ${backgroundImage ? 'relative' : ''}`}>
+    <div className={`w-full  dark:bg-gray-800 ${backgroundImage ? 'relative' : ''}`}>
       {backgroundImage && (
         <div className="fixed inset-0 z-0">
           <Image

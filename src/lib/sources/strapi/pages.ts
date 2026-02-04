@@ -65,7 +65,6 @@ export async function fetchPages() {
 
 export async function fetchPageBySlug(slug: string) {
   try {
-    console.log(`${process.env.STRAPI_URL}/api/pages?filters[slug][$eq]=${slug}`)
     const res = await axios.get(`${process.env.STRAPI_URL}/api/pages`, {
       params: {
         'filters[slug][$eq]': slug,

@@ -224,22 +224,21 @@ const TeaserClassic: React.FC<TeaserProps> = ({
 }) => (
   <div
     style={{ textAlign: "center", maxWidth: 700, margin: "0 auto" }}
-    className={`flex flex-col items-center  ${className}`}
+    className={`flex flex-col items-center h-full  ${className}`}
   >
     <h2 style={{ fontSize: "2rem", fontWeight: 400, margin: "2rem 0 0.5rem" }}>
       {title}
     </h2>
     {images && images.length > 0 && (
-      <div className="w-full rounded-lg overflow-hidden my-4">
+      <div className="w-full max-w-[200px] rounded-lg overflow-hidden my-4">
         <TeaserImages images={images} image={image} title={title} className="rounded-lg" />
       </div>
     )}
     <MarkdownCopy
       copy={copy}
       className="text-gray-700 dark:text-gray-300"
-      style={{ margin: "1.5rem 0", fontSize: "1rem" }}
     />
-    <span className="flex-1"></span>
+    <span className="flex-1 grow"></span>
     {ctaLink && ctaLabel && (
       <a
         className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white mt-auto"
@@ -355,7 +354,7 @@ const TeaserProject: React.FC<TeaserProps> = ({
   className,
 }) => (
   <article
-    className={`group bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/50 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-900/70 transition-all duration-300 flex flex-col h-full border border-black shadow-sm ${className || ''}`}
+    className={`group  dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/50 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-900/70 transition-all duration-300 flex flex-col h-full border border-black shadow-sm ${className || ''}`}
   >
     {/* Image section */}
     {images && images.length > 0 && (
@@ -425,7 +424,6 @@ const variantMap: Record<TeaserVariant, React.FC<TeaserProps>> = {
 
 const Teaser: React.FC<TeaserProps> = (props) => {
   const Variant = variantMap[props.variant || "classic"];
-  console.log("TEASER", props);
   return <Variant {...props} />;
 };
 
