@@ -64,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
                   backgroundImage: `url("${image.blurDataURL}")`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  filter: 'blur(20px)',
+                  filter: 'blur(2px)',
                   transform: 'scale(1.1)',
                 }}
                 aria-hidden="true"

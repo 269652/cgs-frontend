@@ -19,7 +19,7 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
             backgroundImage: `url("${blurDataURL}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'blur(20px)',
+            filter: 'blur(2px)',
             transform: 'scale(1.1)',
           }}
           aria-hidden="true"
@@ -49,7 +49,7 @@ export function StrapiImageClient(props: ImageProps & { blurDataURL?: string }) 
             backgroundImage: `url("${blurDataURL}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'blur(20px)',
+            filter: 'blur(2px)',
             transform: 'scale(1.1)',
           }}
           aria-hidden="true"
