@@ -13,7 +13,6 @@ export async function getBlurDataURL(src: string): Promise<string> {
     if (!absoluteUrl) return "";
     
     const isSvg = src.toLowerCase().endsWith('.svg');
-    if (isSvg) console.log(`[Blur] Fetching SVG for blur: ${absoluteUrl}`);
     const res = await fetch(absoluteUrl);
     if (!res.ok) {
       console.warn(`[Blur] Failed to fetch image (${res.status}): ${absoluteUrl}`);
@@ -25,7 +24,6 @@ export async function getBlurDataURL(src: string): Promise<string> {
     let processBuffer: Buffer = buffer;
     if (isSvg) {
       try {
-        console.log(`[Blur] Converting SVG to PNG: ${src}`);
         // Convert SVG to PNG - sharp will respect the SVG's viewBox aspect ratio
         // We just set a max width, height will be calculated based on aspect ratio
         // Use transparent background
@@ -34,7 +32,6 @@ export async function getBlurDataURL(src: string): Promise<string> {
           .png()
           .toBuffer();
         processBuffer = pngBuffer;
-        console.log(`[Blur] SVG converted to PNG successfully. PNG size: ${pngBuffer.length} bytes`);
       } catch (svgError) {
         console.error(`[Blur] Failed to process SVG: ${src}`, svgError);
         return "";
@@ -45,8 +42,6 @@ export async function getBlurDataURL(src: string): Promise<string> {
     const metadata = await sharp(processBuffer).metadata();
     const originalWidth = metadata.width || 512;
     const originalHeight = metadata.height || 512;
-    
-    if (isSvg) console.log(`[Blur] Image dimensions: ${originalWidth}x${originalHeight} (from PNG conversion)`);
     
     // Calculate thumbnail size maintaining aspect ratio
     // Target max dimension of 256px
@@ -60,8 +55,6 @@ export async function getBlurDataURL(src: string): Promise<string> {
       thumbHeight = maxDimension;
       thumbWidth = Math.round((originalWidth / originalHeight) * maxDimension);
     }
-    
-    if (isSvg) console.log(`[Blur] Creating thumbnail: ${thumbWidth}x${thumbHeight}`);
     
     // For SVGs, use PNG to preserve transparency; for raster images, use JPEG
     let tiny: Buffer;
@@ -82,9 +75,6 @@ export async function getBlurDataURL(src: string): Promise<string> {
     }
     
     cache.set(src, dataURL);
-    if (isSvg) {
-      console.log(`[Blur] Generated PNG preview for SVG: ${src.substring(0, 60)}... (${dataURL.length} chars, thumbnail: ${tiny.length} bytes)`);
-    }
     return dataURL;
   } catch (error) {
     console.error(`[Blur] Error generating blur for ${src}:`, error);

@@ -32,8 +32,6 @@ const Page: React.FC<PageProps> = async ({
   rows,
   navigation,
 }) => {
-  console.log ("PAGE FOOTER", footer)
-  
   // Pre-process header images with blur data for no-JS support
   let processedHeader = header;
   if (header) {

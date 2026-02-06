@@ -25,7 +25,6 @@ export async function processImagesWithBlur(
       try {
         const isSvg = img.url.toLowerCase().endsWith('.svg');
         const blurDataURL = await getBlurDataURL(img.url);
-        console.log(`[ImageProcessor] Processed image: ${img.url.substring(0, 60)}... | Blur: ${blurDataURL ? 'Generated' : 'None'}`);
         return {
           url: img.url,
           name: img.name,

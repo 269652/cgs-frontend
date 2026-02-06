@@ -39,11 +39,9 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
   // If no metadata provided, try to fetch the default metadata from Strapi
   if (!siteMetadata) {
     try {
-      console.log('No page metadata found, attempting to fetch default metadata...');
       const defaultMetadataResult = await fetchDefaultMetadata();
       if (defaultMetadataResult.data) {
         effectiveMetadata = defaultMetadataResult.data;
-        console.log('✅ Using default metadata from Strapi:', effectiveMetadata.metaTitle);
       } else {
         console.log('⚠️ Default metadata not available:', defaultMetadataResult.error);
       }
