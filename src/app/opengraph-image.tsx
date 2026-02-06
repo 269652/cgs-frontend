@@ -1,4 +1,6 @@
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic'; // Don't generate at build time
+export const revalidate = 30; // Revalidate every 30 seconds
 export const alt = 'Clara-Grunwald-Schule';
 export const size = {
   width: 1200,
