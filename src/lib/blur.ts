@@ -25,9 +25,10 @@ export async function getBlurDataURL(src: string): Promise<string> {
     let processBuffer: Buffer = buffer;
     if (isSvg) {
       try {
-        // Convert SVG to PNG at a reasonable size first
+        // Convert SVG to PNG - sharp will respect the SVG's viewBox aspect ratio
+        // We just set a max width, height will be calculated based on aspect ratio
         const pngBuffer = await sharp(buffer)
-          .resize(400, 400, { fit: "inside", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+          .resize(400, null, { fit: "inside", background: { r: 0, g: 0, b: 0, alpha: 0 } })
           .png()
           .toBuffer();
         processBuffer = pngBuffer;
