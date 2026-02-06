@@ -8,7 +8,7 @@ import { buildMetadata } from "../lib/metadata";
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await fetchPageBySlug('/');
   const page = pageData.data?.[0];
-  return buildMetadata(page?.siteMetadata);
+  return await buildMetadata(page?.siteMetadata);
 }
 
 export default async function Home() {
@@ -39,8 +39,6 @@ export default async function Home() {
   const groups = page.groups || [];
   const header = page.header || null;
   const footer = page.footer || null;
-  
-  console.log("page", pages, "GROUPS", groups, "NAVIGATION", navigation);
   
   return (
     <div className="font-sans items-center justify-items-center min-h-screen max-w-screen bg-white dark:bg-gray-900">

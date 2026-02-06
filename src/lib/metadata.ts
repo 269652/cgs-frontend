@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { imageLink } from './imageLink';
 import { metadata as defaultMetadata} from '@/app/layout';
+import { fetchDefaultMetadata } from './sources/strapi/metadata';
+
 interface StrapiImage {
   url: string;
   width?: number;
@@ -31,76 +33,97 @@ interface StrapiMetadata {
   appleTouchIcon?: StrapiImage;
 }
 
-export function buildMetadata(siteMetadata: StrapiMetadata | null | undefined): Metadata {
+export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefined): Promise<Metadata> {
+  let effectiveMetadata = siteMetadata;
+  
+  // If no metadata provided, try to fetch the default metadata from Strapi
   if (!siteMetadata) {
+    try {
+      console.log('No page metadata found, attempting to fetch default metadata...');
+      const defaultMetadataResult = await fetchDefaultMetadata();
+      if (defaultMetadataResult.data) {
+        effectiveMetadata = defaultMetadataResult.data;
+        console.log('✅ Using default metadata from Strapi:', effectiveMetadata.metaTitle);
+      } else {
+        console.log('⚠️ Default metadata not available:', defaultMetadataResult.error);
+      }
+    } catch (error) {
+      console.error('❌ Failed to fetch default metadata:', error);
+      console.log('🔄 Falling back to layout default metadata');
+    }
+  }
+  
+  // If still no metadata (either none provided or default fetch failed), use layout default
+  if (!effectiveMetadata) {
+    console.log('📋 Using hardcoded default metadata from layout');
     return defaultMetadata;
   }
 
   const metadata: Metadata = {
-    title: siteMetadata.metaTitle,
-    description: siteMetadata.metaDescription,
+    title: effectiveMetadata.metaTitle,
+    description: effectiveMetadata.metaDescription,
   };
 
   // Keywords
-  if (siteMetadata.keywords) {
-    metadata.keywords = siteMetadata.keywords.split(',').map(k => k.trim());
+  if (effectiveMetadata.keywords) {
+    metadata.keywords = effectiveMetadata.keywords.split(',').map(k => k.trim());
   }
 
   // Robots
-  if (siteMetadata.robots) {
-    metadata.robots = siteMetadata.robots;
+  if (effectiveMetadata.robots) {
+    metadata.robots = effectiveMetadata.robots;
   }
 
   // Theme color
-  if (siteMetadata.themeColor) {
-    metadata.themeColor = siteMetadata.themeColor;
+  if (effectiveMetadata.themeColor) {
+    metadata.themeColor = effectiveMetadata.themeColor;
   }
 
   // Canonical URL
-  if (siteMetadata.canonicalUrl) {
+  if (effectiveMetadata.canonicalUrl) {
     metadata.alternates = {
-      canonical: siteMetadata.canonicalUrl,
+      canonical: effectiveMetadata.canonicalUrl,
     };
   }
 
   // Open Graph
   metadata.openGraph = {
-    title: siteMetadata.ogTitle || siteMetadata.metaTitle,
-    description: siteMetadata.ogDescription || siteMetadata.metaDescription,
-    type: siteMetadata.ogType || 'website',
-    locale: siteMetadata.ogLocale || 'de_DE',
-    siteName: siteMetadata.ogSiteName,
+    title: effectiveMetadata.ogTitle || effectiveMetadata.metaTitle,
+    description: effectiveMetadata.ogDescription || effectiveMetadata.metaDescription,
+    type: effectiveMetadata.ogType || 'website',
+    locale: effectiveMetadata.ogLocale || 'de_DE',
+    siteName: effectiveMetadata.ogSiteName,
   };
 
-  if (siteMetadata.ogImage?.url) {
-    const ogImageUrl = imageLink(siteMetadata.ogImage.url);
+  if (effectiveMetadata.ogImage?.url) {
+    const ogImageUrl = imageLink(effectiveMetadata.ogImage.url);
     if (ogImageUrl && metadata.openGraph) {
       metadata.openGraph.images = [{
         url: ogImageUrl,
-        width: siteMetadata.ogImage.width || 1200,
-        height: siteMetadata.ogImage.height || 630,
-        alt: siteMetadata.ogImage.alternativeText || siteMetadata.metaTitle,
+        width: effectiveMetadata.ogImage.width || 1200,
+        height: effectiveMetadata.ogImage.height || 630,
+        alt: effectiveMetadata.ogImage.alternativeText || effectiveMetadata.metaTitle,
       }];
     }
   }
 
   // Twitter
   metadata.twitter = {
-    card: siteMetadata.twitterCard || 'summary_large_image',
-    title: siteMetadata.twitterTitle || siteMetadata.ogTitle || siteMetadata.metaTitle,
-    description: siteMetadata.twitterDescription || siteMetadata.ogDescription || siteMetadata.metaDescription,
-    site: siteMetadata.twitterSite,
-    creator: siteMetadata.twitterCreator,
+    card: effectiveMetadata.twitterCard || 'summary_large_image',
+    title: effectiveMetadata.twitterTitle || effectiveMetadata.ogTitle || effectiveMetadata.metaTitle,
+    description: effectiveMetadata.twitterDescription || effectiveMetadata.ogDescription || effectiveMetadata.metaDescription,
+    site: effectiveMetadata.twitterSite,
+    creator: effectiveMetadata.twitterCreator,
   };
 
-  if (siteMetadata.twitterImage?.url) {
-    const twitterImageUrl = imageLink(siteMetadata.twitterImage.url);
+  if (effectiveMetadata.twitterImage?.url) {
+    const twitterImageUrl = imageLink(effectiveMetadata.twitterImage.url);
     if (twitterImageUrl && metadata.twitter) {
       metadata.twitter.images = [twitterImageUrl];
     }
-  } else if (siteMetadata.ogImage?.url) {
+  } else if (effectiveMetadata.ogImage?.url) {
     // Fall back to OG image for Twitter
-    const ogImageUrl = imageLink(siteMetadata.ogImage.url);
+    const ogImageUrl = imageLink(effectiveMetadata.ogImage.url);
     if (ogImageUrl && metadata.twitter) {
       metadata.twitter.images = [ogImageUrl];
     }
@@ -109,15 +132,15 @@ export function buildMetadata(siteMetadata: StrapiMetadata | null | undefined): 
   // Icons (favicon and apple touch icon)
   const icons: Metadata['icons'] = {};
 
-  if (siteMetadata.favicon?.url) {
-    const faviconUrl = imageLink(siteMetadata.favicon.url);
+  if (effectiveMetadata.favicon?.url) {
+    const faviconUrl = imageLink(effectiveMetadata.favicon.url);
     if (faviconUrl) {
       icons.icon = faviconUrl;
     }
   }
 
-  if (siteMetadata.appleTouchIcon?.url) {
-    const appleTouchIconUrl = imageLink(siteMetadata.appleTouchIcon.url);
+  if (effectiveMetadata.appleTouchIcon?.url) {
+    const appleTouchIconUrl = imageLink(effectiveMetadata.appleTouchIcon.url);
     if (appleTouchIconUrl) {
       icons.apple = appleTouchIconUrl;
     }

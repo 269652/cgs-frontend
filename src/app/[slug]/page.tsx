@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const pageData = await fetchPageBySlug(slug);
   const page = pageData.data?.[0];
-  return buildMetadata(page?.siteMetadata);
+  return await buildMetadata(page?.siteMetadata);
 }
 
 export default async function Home({ params }: Props) {
