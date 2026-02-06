@@ -17,7 +17,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Home({ params }: Props) {
-  console.log("SLUG", (await params).slug);
   const pageData = await fetchPageBySlug((await params).slug);
   const navigation = await getNavigationData();
   
@@ -31,7 +30,6 @@ export default async function Home({ params }: Props) {
     );
   }
   
-  console.log("DATA", pageData.data);
   // Strapi v5 returns { data: [...] }
   const pages = pageData.data || [];
   // Assume first page for demo
@@ -48,7 +46,6 @@ export default async function Home({ params }: Props) {
   }
   
   const groups = page.groups || [];
-  console.log("page", pages, "GROUPS", groups, navigation);
   return (
     <div className="font-sans items-center justify-items-center min-h-screen bg-white dark:bg-gray-900">
       <main className="flex flex-col items-center w-full">

@@ -161,7 +161,7 @@ export const Navigation: React.FC<NavigationProps> = ({ categories }) => {
 
       {/* Mobile vertical nav */}
       {mobileMenuOpen && (
-        <div className="sm:hidden flex flex-col  dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg absolute top-full left-0 right-0 z-50 max-h-[80vh] overflow-y-auto">
+        <div className="sm:hidden flex flex-col bg-white dark:!bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg absolute top-full left-0 right-0 z-50 max-h-[80vh] overflow-y-auto">
           {sortedCategories.map((category) => (
             <NavigationItem
               key={category.id}
