@@ -65,6 +65,10 @@ ENV NODE_ENV=production
 ARG STRAPI_URL
 ENV STRAPI_URL=${STRAPI_URL}
 
+# Accept NEXT_PUBLIC_SITE_URL as build arg for metadata generation
+ARG NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+
 # Build the Next.js application
 RUN npm run build
 

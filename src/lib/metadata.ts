@@ -57,10 +57,7 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
     return defaultMetadata;
   }
 
-  const metadata: Metadata = {
-    title: effectiveMetadata.metaTitle,
-    description: effectiveMetadata.metaDescription,
-  };
+  const metadata: Metadata = {\n    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),\n    title: effectiveMetadata.metaTitle,\n    description: effectiveMetadata.metaDescription,\n  };
 
   // Keywords
   if (effectiveMetadata.keywords) {
