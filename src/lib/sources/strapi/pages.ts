@@ -63,6 +63,40 @@ export async function fetchPages() {
   }
 }
 
+export async function fetchAllSlugs(): Promise<string[]> {
+  const slugs: string[] = [];
+  let page = 1;
+  let hasMore = true;
+
+  try {
+    while (hasMore) {
+      const res = await axios.get(`${process.env.STRAPI_URL}/api/pages`, {
+        params: {
+          'fields[0]': 'slug',
+          'pagination[page]': page,
+          'pagination[pageSize]': 100,
+        },
+        timeout: 5000,
+      });
+
+      const entries = res.data?.data || [];
+      for (const entry of entries) {
+        if (entry.slug && entry.slug !== '/') {
+          slugs.push(entry.slug);
+        }
+      }
+
+      const pagination = res.data?.meta?.pagination;
+      hasMore = pagination ? page < pagination.pageCount : false;
+      page++;
+    }
+  } catch (error) {
+    console.error('Failed to fetch slugs from Strapi:', error);
+  }
+
+  return slugs;
+}
+
 export async function fetchPageBySlug(slug: string) {
   try {
     const res = await axios.get(`${process.env.STRAPI_URL}/api/pages`, {
