@@ -22,8 +22,8 @@ export async function getBlurDataURL(src: string): Promise<string> {
     }
     const buffer = Buffer.from(await res.arrayBuffer());
     const tiny = await sharp(buffer)
-      .resize(8, 8, { fit: "cover" })
-      .jpeg({ quality: 20 })
+      .resize(32, 32, { fit: "cover" })
+      .jpeg({ quality: 50 })
       .toBuffer();
     const dataURL = `data:image/jpeg;base64,${tiny.toString("base64")}`;
     cache.set(src, dataURL);
