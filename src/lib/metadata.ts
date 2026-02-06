@@ -57,7 +57,11 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
     return defaultMetadata;
   }
 
-  const metadata: Metadata = {\n    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),\n    title: effectiveMetadata.metaTitle,\n    description: effectiveMetadata.metaDescription,\n  };
+  const metadata: Metadata = {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+    title: effectiveMetadata.metaTitle,
+    description: effectiveMetadata.metaDescription,
+  };
 
   // Keywords
   if (effectiveMetadata.keywords) {
@@ -90,7 +94,9 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
     siteName: effectiveMetadata.ogSiteName,
   };
 
-  // Note: OG images are handled by opengraph-image.tsx files\n\n  // Twitter
+  // Note: OG images are handled by opengraph-image.tsx files
+
+  // Twitter
   metadata.twitter = {
     card: effectiveMetadata.twitterCard || 'summary_large_image',
     title: effectiveMetadata.twitterTitle || effectiveMetadata.ogTitle || effectiveMetadata.metaTitle,
