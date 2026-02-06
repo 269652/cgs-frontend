@@ -21,9 +21,28 @@ export async function getBlurDataURL(src: string): Promise<string> {
       return "";
     }
     const buffer = Buffer.from(await res.arrayBuffer());
+    
+    // Get original image dimensions
+    const metadata = await sharp(buffer).metadata();
+    const originalWidth = metadata.width || 512;
+    const originalHeight = metadata.height || 512;
+    
+    // Calculate thumbnail size maintaining aspect ratio
+    // Target max dimension of 256px
+    const maxDimension = 256;
+    let thumbWidth, thumbHeight;
+    
+    if (originalWidth > originalHeight) {
+      thumbWidth = maxDimension;
+      thumbHeight = Math.round((originalHeight / originalWidth) * maxDimension);
+    } else {
+      thumbHeight = maxDimension;
+      thumbWidth = Math.round((originalWidth / originalHeight) * maxDimension);
+    }
+    
     const tiny = await sharp(buffer)
-      .resize(128, 128, { fit: "cover" })
-      .jpeg({ quality: 50 })
+      .resize(thumbWidth, thumbHeight, { fit: "cover" })
+      .jpeg({ quality: 80 })
       .toBuffer();
     const dataURL = `data:image/jpeg;base64,${tiny.toString("base64")}`;
     cache.set(src, dataURL);
