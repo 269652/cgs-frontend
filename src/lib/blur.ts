@@ -5,8 +5,6 @@ const cache = new Map<string, string>();
 
 export async function getBlurDataURL(src: string): Promise<string> {
   if (!src) return "";
-  // Skip SVG files - they don't need blur placeholders
-  if (src.toLowerCase().endsWith('.svg')) return "";
   if (cache.has(src)) return cache.get(src)!;
 
   try {
@@ -14,7 +12,8 @@ export async function getBlurDataURL(src: string): Promise<string> {
     const absoluteUrl = imageLink(src);
     if (!absoluteUrl) return "";
     
-    console.log(`[Blur] Fetching image for blur: ${absoluteUrl}`);
+    const isSvg = src.toLowerCase().endsWith('.svg');
+    console.log(`[Blur] Fetching image for blur: ${absoluteUrl}${isSvg ? ' (SVG)' : ''}`);
     const res = await fetch(absoluteUrl);
     if (!res.ok) {
       console.warn(`[Blur] Failed to fetch image (${res.status}): ${absoluteUrl}`);
@@ -22,8 +21,24 @@ export async function getBlurDataURL(src: string): Promise<string> {
     }
     const buffer = Buffer.from(await res.arrayBuffer());
     
+    // For SVG files, convert to PNG first then create blur
+    let processBuffer: Buffer = buffer;
+    if (isSvg) {
+      try {
+        // Convert SVG to PNG at a reasonable size first
+        const pngBuffer = await sharp(buffer)
+          .resize(400, 400, { fit: "inside", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+          .png()
+          .toBuffer();
+        processBuffer = pngBuffer;
+      } catch (svgError) {
+        console.warn(`[Blur] Failed to process SVG, skipping blur: ${src}`, svgError);
+        return "";
+      }
+    }
+    
     // Get original image dimensions
-    const metadata = await sharp(buffer).metadata();
+    const metadata = await sharp(processBuffer).metadata();
     const originalWidth = metadata.width || 512;
     const originalHeight = metadata.height || 512;
     
@@ -40,7 +55,7 @@ export async function getBlurDataURL(src: string): Promise<string> {
       thumbWidth = Math.round((originalWidth / originalHeight) * maxDimension);
     }
     
-    const tiny = await sharp(buffer)
+    const tiny = await sharp(processBuffer)
       .resize(thumbWidth, thumbHeight, { fit: "cover" })
       .jpeg({ quality: 80 })
       .toBuffer();
