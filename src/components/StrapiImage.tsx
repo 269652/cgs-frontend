@@ -19,7 +19,7 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
             backgroundImage: `url("${blurDataURL}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'blur(2px)',
+            filter: 'blur(4px)',
             transform: 'scale(1.1)',
           }}
           aria-hidden="true"
@@ -28,8 +28,6 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
       <Image
         {...props}
         className={`relative z-10 ${props.className || ''}`}
-        placeholder={blurDataURL ? "blur" : undefined}
-        blurDataURL={blurDataURL || undefined}
       />
     </div>
   );
@@ -58,8 +56,6 @@ export function StrapiImageClient(props: ImageProps & { blurDataURL?: string }) 
       <Image
         {...imageProps}
         className={`relative z-10 ${imageProps.className || ''}`}
-        placeholder={blurDataURL ? "blur" : undefined}
-        blurDataURL={blurDataURL || undefined}
       />
     </div>
   );

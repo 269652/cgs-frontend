@@ -77,8 +77,6 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
               height={210}
               className="w-full h-[300px] md:h-[210px] object-cover relative z-10"
               style={{ objectFit: "cover", objectPosition: "center" }}
-              placeholder={image.blurDataURL ? "blur" : undefined}
-              blurDataURL={image.blurDataURL}
               priority={idx === 0}
             />
             {/* No-JS fallback */}
