@@ -23,7 +23,6 @@ export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageC
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: isSvg ? 'none' : 'blur(4px)',
-            transform: isSvg ? 'none' : 'scale(1.05)',
             opacity: loaded ? 0 : 1,
           }}
           aria-hidden="true"

@@ -20,7 +20,6 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             filter: 'blur(4px)',
-            transform: 'scale(1.05)',
           }}
           aria-hidden="true"
         />
