@@ -118,6 +118,43 @@ export async function fetchAllSlugs(): Promise<string[]> {
   return slugs;
 }
 
+export async function fetchAllSlugsWithDates(): Promise<{ slug: string; updatedAt: string }[]> {
+  const results: { slug: string; updatedAt: string }[] = [];
+  let page = 1;
+  let hasMore = true;
+
+  try {
+    while (hasMore) {
+      const res = await fetchWithRetry(async () =>
+        axios.get(`${process.env.STRAPI_URL}/api/pages`, {
+          params: {
+            'fields[0]': 'slug',
+            'fields[1]': 'updatedAt',
+            'pagination[page]': page,
+            'pagination[pageSize]': 100,
+          },
+          timeout: TIMEOUT,
+        })
+      );
+
+      const entries = res.data?.data || [];
+      for (const entry of entries) {
+        if (entry.slug && entry.slug !== '/') {
+          results.push({ slug: entry.slug, updatedAt: entry.updatedAt });
+        }
+      }
+
+      const pagination = res.data?.meta?.pagination;
+      hasMore = pagination ? page < pagination.pageCount : false;
+      page++;
+    }
+  } catch (error) {
+    console.error('Failed to fetch slugs with dates from Strapi:', error);
+  }
+
+  return results;
+}
+
 export async function fetchPageBySlug(slug: string) {
   try {
     return await fetchWithRetry(async () => {
