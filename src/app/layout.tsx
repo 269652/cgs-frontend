@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 
 // Default metadata - will be overridden by page-specific metadata from Strapi
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: {
     default: "Clara Grunwald Schule",
     template: "%s | CGS",
