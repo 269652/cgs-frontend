@@ -10,15 +10,57 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
   const blurDataURL = forceBlurDataURL || await getBlurDataURL(src);
 
   return (
-    <Image
-      {...props}
-      placeholder={blurDataURL ? "blur" : undefined}
-      blurDataURL={blurDataURL || undefined}
-    />
+    <div className="relative overflow-hidden" style={{ display: 'inline-block', width: '100%', height: '100%' }}>
+      {/* Blur placeholder background - embedded in static HTML */}
+      {blurDataURL && (
+        <div
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url("${blurDataURL}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(20px)',
+            transform: 'scale(1.1)',
+          }}
+          aria-hidden="true"
+        />
+      )}
+      <Image
+        {...props}
+        className={`relative z-10 ${props.className || ''}`}
+        placeholder={blurDataURL ? "blur" : undefined}
+        blurDataURL={blurDataURL || undefined}
+      />
+    </div>
   );
 }
 
 // Client-side version that accepts blur data as prop
-export function StrapiImageClient(props: ImageProps) {
-  return <Image {...props} />;
+export function StrapiImageClient(props: ImageProps & { blurDataURL?: string }) {
+  const { blurDataURL, ...imageProps } = props;
+  
+  return (
+    <div className="relative overflow-hidden" style={{ display: 'inline-block', width: '100%', height: '100%' }}>
+      {/* Blur placeholder background - embedded in static HTML */}
+      {blurDataURL && (
+        <div
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url("${blurDataURL}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(20px)',
+            transform: 'scale(1.1)',
+          }}
+          aria-hidden="true"
+        />
+      )}
+      <Image
+        {...imageProps}
+        className={`relative z-10 ${imageProps.className || ''}`}
+        placeholder={blurDataURL ? "blur" : undefined}
+        blurDataURL={blurDataURL || undefined}
+      />
+    </div>
+  );
 }

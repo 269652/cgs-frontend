@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { imageLink } from "./imageLink";
 
 const cache = new Map<string, string>();
 
@@ -9,8 +10,16 @@ export async function getBlurDataURL(src: string): Promise<string> {
   if (cache.has(src)) return cache.get(src)!;
 
   try {
-    const res = await fetch(src);
-    if (!res.ok) return "";
+    // Convert relative URLs to absolute URLs
+    const absoluteUrl = imageLink(src);
+    if (!absoluteUrl) return "";
+    
+    console.log(`[Blur] Fetching image for blur: ${absoluteUrl}`);
+    const res = await fetch(absoluteUrl);
+    if (!res.ok) {
+      console.warn(`[Blur] Failed to fetch image (${res.status}): ${absoluteUrl}`);
+      return "";
+    }
     const buffer = Buffer.from(await res.arrayBuffer());
     const tiny = await sharp(buffer)
       .resize(8, 8, { fit: "cover" })
@@ -18,8 +27,10 @@ export async function getBlurDataURL(src: string): Promise<string> {
       .toBuffer();
     const dataURL = `data:image/jpeg;base64,${tiny.toString("base64")}`;
     cache.set(src, dataURL);
+    console.log(`[Blur] Generated blur for: ${src.substring(0, 60)}... (${dataURL.length} chars)`);
     return dataURL;
-  } catch {
+  } catch (error) {
+    console.error(`[Blur] Error generating blur for ${src}:`, error);
     return "";
   }
 }

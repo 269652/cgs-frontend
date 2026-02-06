@@ -33,13 +33,14 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
         <Link href="/">
           <Image
             src={imageLink(logo.url)}
-            alt={logo.name || "Logo"}
+            alt=""
             width={200}
             height={80}
             className="h-[80px] w-auto"
             style={{ objectFit: "contain" }}
             placeholder={logo.blurDataURL ? "blur" : undefined}
             blurDataURL={logo.blurDataURL}
+            priority
           />
         </Link>
 
@@ -55,15 +56,30 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
       <div className="flex flex-col md:flex-row w-full gap-0 max-w-[calc(100vw-0rem)]" >
         {images.map((image, idx) => (
           <div key={idx} className="flex-1 relative overflow-hidden first:hidden md:first:block">
+            {/* Blur placeholder background - embedded in static HTML */}
+            {image.blurDataURL && (
+              <div
+                className="absolute inset-0 w-full h-full"
+                style={{
+                  backgroundImage: `url("${image.blurDataURL}")`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  filter: 'blur(20px)',
+                  transform: 'scale(1.1)',
+                }}
+                aria-hidden="true"
+              />
+            )}
             <Image
               src={imageLink(image.url)}
-              alt={image.name || `Header image ${idx + 1}`}
+              alt=""
               width={400}
               height={210}
-              className="w-full h-[300px] md:h-[210px] object-cover"
+              className="w-full h-[300px] md:h-[210px] object-cover relative z-10"
               style={{ objectFit: "cover", objectPosition: "center" }}
               placeholder={image.blurDataURL ? "blur" : undefined}
               blurDataURL={image.blurDataURL}
+              priority={idx === 0}
             />
             {/* No-JS fallback */}
             <noscript>
