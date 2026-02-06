@@ -24,6 +24,10 @@ RUN npm rebuild && npm install lightningcss @tailwindcss/oxide --force
 # Set NODE_ENV to production
 ENV NODE_ENV=production
 
+# Accept STRAPI_URL as build arg and set as env var for Next.js SSG
+ARG STRAPI_URL
+ENV STRAPI_URL=${STRAPI_URL}
+
 # Build the Next.js application
 RUN npm run build
 
