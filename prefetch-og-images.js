@@ -1,5 +1,4 @@
-const fetch = require('node-fetch');
-
+// Node.js 18+ has built-in fetch
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
 
