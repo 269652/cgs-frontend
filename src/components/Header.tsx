@@ -4,7 +4,7 @@ import { Navigation } from "./Navigation";
 import { NavigationCategory } from "@/types/navigation";
 import Impressum from "./Impressum";
 import Link from "next/link";
-import { StrapiImageClient } from "./StrapiImage";
+import { StrapiImageClient } from "./StrapiImageClient";
 
 export interface HeaderProps {
   logo?: {

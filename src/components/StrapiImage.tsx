@@ -1,30 +1,26 @@
-'use client';
-
-import { useState } from "react";
 import Image, { ImageProps } from "next/image";
+import { getBlurDataURL } from "@/lib/blur";
 
-type StrapiImageClientProps = ImageProps & {
-  blurDataURL?: string;
-  isSvg?: boolean;
+type StrapiImageProps = Omit<ImageProps, "placeholder" | "blurDataURL"> & {
+  forceBlurDataURL?: string; // Allow passing pre-generated blur data
 };
 
-export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageClientProps) {
-  const [loaded, setLoaded] = useState(false);
-  
+export default async function StrapiImage({ forceBlurDataURL, ...props }: StrapiImageProps) {
+  const src = typeof props.src === "string" ? props.src : "";
+  const blurDataURL = forceBlurDataURL || await getBlurDataURL(src);
+
   return (
     <div className="relative overflow-hidden" style={{ display: 'inline-block', width: '100%', height: '100%' }}>
-      {/* PNG preview for SVGs (sharp, no blur) or blur placeholder for raster images */}
+      {/* Blur placeholder background - embedded in static HTML */}
       {blurDataURL && (
         <div
-          className="absolute inset-0 w-full h-full transition-opacity duration-300"
+          className="absolute inset-0 w-full h-full"
           style={{
             backgroundImage: `url("${blurDataURL}")`,
-            backgroundSize: props.style?.objectFit === 'contain' ? 'contain' : 'cover',
+            backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: isSvg ? 'none' : 'blur(4px)',
-            transform: isSvg ? 'none' : 'scale(1.05)',
-            opacity: loaded ? 0 : 1,
+            filter: 'blur(4px)',
+            transform: 'scale(1.05)',
           }}
           aria-hidden="true"
         />
@@ -32,8 +28,8 @@ export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageC
       <Image
         {...props}
         className={`relative z-10 ${props.className || ''}`}
-        onLoad={() => setLoaded(true)}
       />
     </div>
   );
 }
+
