@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 
 type LightboxProps = {
-  images: { src: string; alt?: string }[];
+  images: { src: string; alt?: string; blurDataURL?: string }[];
   currentIndex: number;
   isOpen: boolean;
   onClose: () => void;
@@ -111,11 +111,13 @@ const Lightbox: React.FC<LightboxProps> = ({
           width={1200}
           height={800}
           className="max-w-full object-contain max-h-[80vh] md:max-h-[100vh] md:max-w-[100vw]"
-          style={{ 
-            width: '80vw', 
+          style={{
+            width: '80vw',
             height: '80svh'
           }}
-          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on image
+          onClick={(e) => e.stopPropagation()}
+          placeholder={currentImage.blurDataURL ? 'blur' : undefined}
+          blurDataURL={currentImage.blurDataURL || undefined}
         />
       </div>
 

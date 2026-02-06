@@ -10,7 +10,7 @@ import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import Lightbox from './Lightbox';
 
 type ImageGalleryProps = {
-  images: { src: string; alt?: string }[];
+  images: { src: string; alt?: string; blurDataURL?: string }[];
   title?: string;
   subtitle?: string;
   ctaLink?: string;
@@ -98,11 +98,13 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               width={400}
               height={300}
               className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
-              style={{ 
+              style={{
                 objectFit: 'cover',
                 aspectRatio: '1/1'
               }}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, (max-width: 1600px) 25vw, 20vw"
+              placeholder={img.blurDataURL ? 'blur' : undefined}
+              blurDataURL={img.blurDataURL || undefined}
             />
             
             {/* Modern hover overlay with subtle gradient */}
@@ -227,6 +229,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
                 style={{ objectFit: 'cover' }}
                 sizes={isFullscreen ? "100vw" : "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"}
                 priority={idx === 0}
+                placeholder={img?.blurDataURL ? 'blur' : undefined}
+                blurDataURL={img?.blurDataURL || undefined}
               />
             </SwiperSlide>
           ))}

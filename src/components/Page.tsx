@@ -4,6 +4,7 @@ import Row from "./Row";
 import Header from "./Header";
 import Footer from "./Footer";
 import { NavigationCategory } from "@/types/navigation";
+import { processImagesWithBlur, processImageWithBlur } from "@/lib/imageProcessor";
 
 interface PageContentComponent {
   __component: string;
@@ -23,7 +24,7 @@ interface PageProps {
   navigation?: NavigationCategory[];
 }
 
-const Page: React.FC<PageProps> = ({
+const Page: React.FC<PageProps> = async ({
   header,
   footer,
   pageContent,
@@ -32,6 +33,21 @@ const Page: React.FC<PageProps> = ({
   navigation,
 }) => {
   console.log ("PAGE FOOTER", footer)
+  
+  // Pre-process header images with blur data for no-JS support
+  let processedHeader = header;
+  if (header) {
+    const [processedLogo, processedImages] = await Promise.all([
+      header.logo ? processImageWithBlur(header.logo) : null,
+      header.images ? processImagesWithBlur(header.images) : []
+    ]);
+    
+    processedHeader = {
+      ...header,
+      logo: processedLogo,
+      images: processedImages
+    };
+  }
   const renderPageContent = () => {
     if (pageContent && pageContent.length > 0) {
       return pageContent.map((component, idx) => {
@@ -83,7 +99,7 @@ const Page: React.FC<PageProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col w-full  dark:bg-gray-900">
-      {header && <Header {...header} navigation={navigation} />}
+      {processedHeader && <Header {...processedHeader} navigation={navigation} />}
       <main className="dark flex-1 w-full  dark:bg-gray-800">
         {renderPageContent()}
       </main>

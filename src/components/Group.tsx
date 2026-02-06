@@ -7,7 +7,8 @@ import Content from "./Content";
 import { imageLink } from "@/lib/imageLink";
 import Header from "./Header";
 import { NavigationCategory } from "@/types/navigation";
-import Image from "next/image";
+import StrapiImage from "./StrapiImage";
+import { getBlurDataURL } from "@/lib/blur";
 
 const componentMap: Record<string, React.FC<any>> = {
   "image-gallery.image-gallery": ImageGallery,
@@ -51,26 +52,136 @@ export type GroupProps = {
   navigation?: NavigationCategory[];
 };
 
+/** Enrich an image with a blur placeholder data URL */
+async function withBlur(src: string, alt?: string) {
+  const blurDataURL = await getBlurDataURL(src);
+  return { src, alt, blurDataURL };
+}
+
+/** Resolve a raw Strapi image array into images with blur data */
+async function resolveImages(rawImages: any[]): Promise<{ src: string; alt?: string; blurDataURL?: string }[]> {
+  const mapped: { src: string; alt?: string }[] = [];
+  for (const img of rawImages) {
+    if (img?.url) {
+      mapped.push({ src: imageLink(img.url), alt: img?.alternativeText || img?.name || "Gallery image" });
+    } else if (img?.file) {
+      mapped.push({ src: imageLink(img.file.url), alt: img?.alt || img.file.name });
+    }
+  }
+  return Promise.all(mapped.map((img) => withBlur(img.src, img.alt)));
+}
+
+/** Resolve teaser images (multiple or single legacy) with blur data */
+async function resolveTeaserImages(cmp: any) {
+  let images: { src: string; alt?: string; blurDataURL?: string }[] | undefined;
+  if (Array.isArray(cmp.images) && cmp.images.length > 0) {
+    images = await Promise.all(
+      cmp.images.map(async (img: any) =>
+        withBlur(imageLink(img.url), img.alternativeText || img.name || cmp.title)
+      )
+    );
+  }
+  let image: { src: string; alt?: string; blurDataURL?: string } | undefined;
+  if (cmp.image?.url) {
+    image = await withBlur(imageLink(cmp.image.url), cmp.image.name || cmp.title);
+  }
+  return { images, image };
+}
+
 /**
  * Section component that can render either:
  * 1. Dynamic zone content (components like image galleries, teasers, etc.)
  * 2. Content relation (references to Content entries with markdown)
  * 3. Both types together
  */
-export const Section: React.FC<SectionProps> = ({
+export const Section: React.FC<SectionProps> = async ({
   background,
   content = [],
   contentRelation = [],
   bgImage,
   isInline = false,
 }) => {
+  /** Render a single dynamic-zone component with pre-computed blur data */
+  async function renderComponent(cmp: any, idx: number, insideContainer = false) {
+    const Cmp = componentMap[cmp.__component];
+    if (!Cmp) return null;
+
+    if (cmp.__component === "image-gallery.image-gallery") {
+      const images = Array.isArray(cmp.images) ? await resolveImages(cmp.images) : [];
+      const displayVariant = insideContainer ? "inline" : (isInline || idx !== 0) ? "inline" : "fullscreen";
+      return (
+        <Cmp
+          key={idx}
+          {...cmp}
+          images={images}
+          autocycle={insideContainer ? undefined : 7}
+          variant={cmp.variant || "slider"}
+          displayVariant={displayVariant}
+        />
+      );
+    }
+
+    if (cmp.__component === "teaser.teaser") {
+      const { images, image } = await resolveTeaserImages(cmp);
+      return (
+        <Cmp
+          key={idx}
+          variant={cmp.variant}
+          title={cmp.title}
+          copy={cmp.copy}
+          ctaLink={cmp.ctaLink}
+          ctaLabel={cmp.ctaLabel}
+          className={cmp.className}
+          images={images}
+          image={image}
+        />
+      );
+    }
+
+    if (cmp.__component === "triple-tease.triple-tease") {
+      const teasers = Array.isArray(cmp.teasers)
+        ? await Promise.all(
+            cmp.teasers.map(async (teaser: any) => {
+              const { images, image } = await resolveTeaserImages(teaser);
+              return {
+                variant: teaser.variant,
+                title: teaser.title,
+                copy: teaser.copy,
+                ctaLink: teaser.ctaLink,
+                ctaLabel: teaser.ctaLabel,
+                images,
+                image,
+              };
+            })
+          )
+        : [];
+      return <Cmp key={idx} title={cmp.title} teasers={teasers} />;
+    }
+
+    return <Cmp key={idx} {...cmp} />;
+  }
+
+  /** Render all content items, handling containers */
+  const renderedContent = await Promise.all(
+    content.map(async (cmp, idx) => {
+      if (cmp.__component === "container.container") {
+        const children = Array.isArray(cmp.children) ? cmp.children : [];
+        const renderedChildren = await Promise.all(
+          children.map((child: any, childIdx: number) => renderComponent(child, childIdx, true))
+        );
+        return <Container key={idx}>{renderedChildren}</Container>;
+      }
+      return renderComponent(cmp, idx);
+    })
+  );
+
   return (
     <div
       className={`flex flex-col justify-center items-center relative ${
-        isInline 
-          ? 'p-1 md:p-2 !px-8' // Minimal padding for inline usage
-          : 'min-h-screen p-2 md:p-8' // Full height and padding for standalone sections
-      } ${!background && !bgImage ? ' bg-white dark:!bg-gray-800' : ''}`}
+        isInline
+          ? "p-1 md:p-2 !px-8"
+          : "min-h-screen p-2 md:p-8"
+      } ${!background && !bgImage ? " bg-white dark:!bg-gray-800" : ""}`}
       style={{
         backgroundColor: background || undefined,
         backgroundImage: bgImage ? `url(${imageLink(bgImage.url)})` : undefined,
@@ -92,193 +203,7 @@ export const Section: React.FC<SectionProps> = ({
       )}
 
       {/* Render dynamic zone content (components) */}
-      {content.map((cmp, idx) => {
-        // Handle Container first (it's not in componentMap, renders children)
-        if (cmp.__component === "container.container") {
-          const children = Array.isArray(cmp.children) ? cmp.children : [];
-          return (
-            <Container key={idx}>
-              {children.map((child: any, childIdx: number) => {
-                const ChildCmp = componentMap[child.__component];
-                if (!ChildCmp) return null;
-                if (child.__component === "image-gallery.image-gallery") {
-                  let images: { src: string; alt?: string }[] = [];
-                  if (Array.isArray(child.images)) {
-                    child.images.forEach((img: any) => {
-                      if (img?.url) {
-                        images.push({
-                          src: imageLink(img.url),
-                          alt: img?.alternativeText || img?.name || 'Gallery image',
-                        });
-                      } else if (img?.file) {
-                        images.push({
-                          src: imageLink(img.file.url),
-                          alt: img?.alt || img.file.name,
-                        });
-                      }
-                    });
-                  }
-                  return <ChildCmp key={childIdx} {...child} images={images} variant={child.variant || "slider"} displayVariant="inline" />;
-                }
-                if (child.__component === "teaser.teaser") {
-                  // Handle multiple images (new) or single image (legacy)
-                  let teaserImages: { src: string; alt?: string }[] | undefined;
-                  if (Array.isArray(child.images) && child.images.length > 0) {
-                    teaserImages = child.images.map((img: any) => ({
-                      src: imageLink(img.url),
-                      alt: img.alternativeText || img.name || child.title,
-                    }));
-                  }
-                  const teaserProps = {
-                    variant: child.variant,
-                    title: child.title,
-                    copy: child.copy,
-                    ctaLink: child.ctaLink,
-                    ctaLabel: child.ctaLabel,
-                    className: child.className,
-                    images: teaserImages,
-                    // Legacy single image fallback
-                    image:
-                      child.image && child.image.url
-                        ? {
-                            src: imageLink(child.image.url),
-                            alt: child.image.name || child.title,
-                          }
-                        : undefined,
-                  };
-                  return <ChildCmp key={childIdx} {...teaserProps} />;
-                }
-                if (child.__component === "triple-tease.triple-tease") {
-                  const teasers = Array.isArray(child.teasers)
-                    ? child.teasers.map((teaser: any) => {
-                        let teaserImages: { src: string; alt?: string }[] | undefined;
-                        if (Array.isArray(teaser.images) && teaser.images.length > 0) {
-                          teaserImages = teaser.images.map((img: any) => ({
-                            src: imageLink(img.url),
-                            alt: img.alternativeText || img.name || teaser.title,
-                          }));
-                        }
-                        return {
-                          variant: teaser.variant,
-                          title: teaser.title,
-                          copy: teaser.copy,
-                          ctaLink: teaser.ctaLink,
-                          ctaLabel: teaser.ctaLabel,
-                          images: teaserImages,
-                          image:
-                            teaser.image && teaser.image.url
-                              ? {
-                                  src: imageLink(teaser.image.url),
-                                  alt: teaser.image.name || teaser.title,
-                                }
-                              : undefined,
-                        };
-                      })
-                    : [];
-                  return <ChildCmp key={childIdx} title={child.title} teasers={teasers} />;
-                }
-                return <ChildCmp key={childIdx} {...child} />;
-              })}
-            </Container>
-          );
-        }
-
-        const Cmp = componentMap[cmp.__component];
-        if (!Cmp) return null;
-        if (cmp.__component === "image-gallery.image-gallery") {
-          let images: { src: string; alt?: string }[] = [];
-          // Handle new simplified media structure
-          if (Array.isArray(cmp.images)) {
-            cmp.images.forEach((img: any) => {
-              // Direct media files (new structure)
-              if (img?.url) {
-                images.push({
-                  src: imageLink(img.url),
-                  alt: img?.alternativeText || img?.name || 'Gallery image',
-                });
-              }
-              // Legacy structure with file property (for backward compatibility)
-              else if (img?.file) {
-                images.push({
-                  src: imageLink(img.file.url),
-                  alt: img?.alt || img.file.name,
-                });
-              }
-            });
-          }
-          // Use fullscreen for the first image gallery in non-inline sections
-          const isFirstImageGallery = idx === 0;
-          const displayVariant = (isInline || !isFirstImageGallery) ? "inline" : "fullscreen";
-          return <Cmp 
-            key={idx} 
-            {...cmp} 
-            images={images} 
-            autocycle={7} 
-            variant={cmp.variant || "slider"} // Use Strapi variant (slider/grid)
-            displayVariant={displayVariant} // Keep existing fullscreen/inline logic
-          />;
-        }
-        if (cmp.__component === "teaser.teaser") {
-          // Handle multiple images (new) or single image (legacy)
-          let teaserImages: { src: string; alt?: string }[] | undefined;
-          if (Array.isArray(cmp.images) && cmp.images.length > 0) {
-            teaserImages = cmp.images.map((img: any) => ({
-              src: imageLink(img.url),
-              alt: img.alternativeText || img.name || cmp.title,
-            }));
-          }
-          // Map Strapi teaser fields to Teaser props
-          const teaserProps = {
-            variant: cmp.variant,
-            title: cmp.title,
-            copy: cmp.copy,
-            ctaLink: cmp.ctaLink,
-            ctaLabel: cmp.ctaLabel,
-            className: cmp.className,
-            images: teaserImages,
-            // Legacy single image fallback
-            image:
-              cmp.image && cmp.image.url
-                ? {
-                    src: imageLink(cmp.image.url),
-                    alt: cmp.image.name || cmp.title,
-                  }
-                : undefined,
-          };
-          return <Cmp key={idx} {...teaserProps} />;
-        }
-        if (cmp.__component === "triple-tease.triple-tease") {
-          // Map Strapi triple tease fields to TripleTease props
-          const teasers = Array.isArray(cmp.teasers)
-            ? cmp.teasers.map((teaser: any) => {
-                let teaserImages: { src: string; alt?: string }[] | undefined;
-                if (Array.isArray(teaser.images) && teaser.images.length > 0) {
-                  teaserImages = teaser.images.map((img: any) => ({
-                    src: imageLink(img.url),
-                    alt: img.alternativeText || img.name || teaser.title,
-                  }));
-                }
-                return {
-                  variant: teaser.variant,
-                  title: teaser.title,
-                  copy: teaser.copy,
-                  ctaLink: teaser.ctaLink,
-                  ctaLabel: teaser.ctaLabel,
-                  images: teaserImages,
-                  image:
-                    teaser.image && teaser.image.url
-                      ? {
-                          src: imageLink(teaser.image.url),
-                          alt: teaser.image.name || teaser.title,
-                        }
-                      : undefined,
-                };
-              })
-            : [];
-          return <Cmp key={idx} title={cmp.title} teasers={teasers} />;
-        }
-        return <Cmp key={idx} {...cmp} />;
-      })}
+      {renderedContent}
     </div>
   );
 };
@@ -302,10 +227,10 @@ const Group: React.FC<GroupProps> = async ({
   const sectionsAreInline = hasContent;
 
   return (
-    <div className={`w-full  dark:bg-gray-800 ${backgroundImage ? 'relative' : ''}`}>
+    <div className={`w-full  dark:bg-gray-800 ${backgroundImage ? "relative" : ""}`}>
       {backgroundImage && (
         <div className="fixed inset-0 z-0">
-          <Image
+          <StrapiImage
             src={getBackgroundImageUrl()!}
             alt="Background"
             fill
@@ -335,7 +260,7 @@ const Group: React.FC<GroupProps> = async ({
             content={section.content || []}
             contentRelation={section.contentRelation || []}
             bgImage={section.bgImage}
-            isInline={section.inline !== undefined ? section.inline : sectionsAreInline} // Use backend inline checkbox or fallback to auto-detection
+            isInline={section.inline !== undefined ? section.inline : sectionsAreInline}
           />
         ))}
       </div>
