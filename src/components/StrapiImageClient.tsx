@@ -11,27 +11,35 @@ type StrapiImageClientProps = ImageProps & {
 export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageClientProps) {
   const [loaded, setLoaded] = useState(false);
   
+  // Determine container sizing - if fill or className present, use flexible sizing
+  const useFlexibleSize = props.fill || props.className?.includes('w-') || props.className?.includes('h-');
+  
   return (
-    <div className="relative overflow-hidden" style={{ display: 'inline-block', width: '100%', height: '100%' }}>
+    <div className="relative" style={{ 
+      display: useFlexibleSize ? 'block' : 'inline-block',
+      width: useFlexibleSize ? '100%' : (props.width ? `${props.width}px` : 'auto'),
+      height: useFlexibleSize ? '100%' : (props.height ? `${props.height}px` : 'auto'),
+      overflow: 'hidden'
+    }}>
       {/* PNG preview for SVGs (sharp, no blur) or blur placeholder for raster images */}
       {blurDataURL && (
         <div
-          className="absolute inset-0 w-full h-full overflow-hidden transition-opacity duration-300"
-          style={{ opacity: loaded ? 0 : 1 }}
+          style={{
+            position: 'absolute',
+            top: isSvg ? '0' : '-2px',
+            left: isSvg ? '0' : '-2px',
+            right: isSvg ? '0' : '-2px',
+            bottom: isSvg ? '0' : '-2px',
+            backgroundImage: `url("${blurDataURL}")`,
+            backgroundSize: props.style?.objectFit === 'contain' ? 'contain' : 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: isSvg ? 'none' : 'blur(4px)',
+            opacity: loaded ? 0 : 1,
+            transition: 'opacity 0.3s',
+          }}
           aria-hidden="true"
-        >
-          <div
-            style={{
-              position: 'absolute',
-              inset: isSvg ? '0' : '-2px', // Extend by half the blur radius for blurred images
-              backgroundImage: `url("${blurDataURL}")`,
-              backgroundSize: props.style?.objectFit === 'contain' ? 'contain' : 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              filter: isSvg ? 'none' : 'blur(4px)',
-            }}
-          />
-        </div>
+        />
       )}
       <Image
         {...props}

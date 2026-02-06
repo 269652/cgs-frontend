@@ -9,25 +9,32 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
   const src = typeof props.src === "string" ? props.src : "";
   const blurDataURL = forceBlurDataURL || await getBlurDataURL(src);
 
+  // Determine container sizing - if fill or className present, use flexible sizing
+  const useFlexibleSize = props.fill || props.className?.includes('w-') || props.className?.includes('h-');
+  
   return (
-    <div className="relative overflow-hidden" style={{ display: 'inline-block', width: '100%', height: '100%' }}>
+    <div className="relative" style={{ 
+      display: useFlexibleSize ? 'block' : 'inline-block',
+      width: useFlexibleSize ? '100%' : (props.width ? `${props.width}px` : 'auto'),
+      height: useFlexibleSize ? '100%' : (props.height ? `${props.height}px` : 'auto'),
+      overflow: 'hidden'
+    }}>
       {/* Blur placeholder background - embedded in static HTML */}
       {blurDataURL && (
         <div
-          className="absolute inset-0 w-full h-full overflow-hidden"
+          style={{
+            position: 'absolute',
+            top: '-2px',
+            left: '-2px', 
+            right: '-2px',
+            bottom: '-2px',
+            backgroundImage: `url("${blurDataURL}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(4px)',
+          }}
           aria-hidden="true"
-        >
-          <div
-            style={{
-              position: 'absolute',
-              inset: '-2px', // Extend by half the blur radius (4px / 2 = 2px)
-              backgroundImage: `url("${blurDataURL}")`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              filter: 'blur(4px)',
-            }}
-          />
-        </div>
+        />
       )}
       <Image
         {...props}
