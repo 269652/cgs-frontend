@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
       <div className="flex flex-col sm:flex-row items-center">
 
         {logo && (
-        <Link href="/" className="block h-[80px]" style={{ width: '200px' }}>
+        <Link href="/" aria-label="Zur Startseite" className="block h-[80px]" style={{ width: '200px' }}>
           <StrapiImageClient
             src={imageLink(logo.url)}
             alt=""

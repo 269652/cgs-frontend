@@ -28,7 +28,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark:[color-scheme:dark]">
+      <head>
       <script defer src="https://cloud.umami.is/script.js" data-website-id="1ad5b908-b758-419e-a13f-3965beafa597"></script>
+          
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased  dark:bg-gray-900 text-gray-900 dark:text-gray-100`}
       >
