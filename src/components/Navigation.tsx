@@ -51,7 +51,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ category, isOpen, onTog
           e.preventDefault();
           onToggle();
         }}
-        className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 dark:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-200 touch-manipulation"
+        className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:!bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-200 touch-manipulation"
         aria-haspopup="true"
         aria-expanded={showDropdown}
       >
