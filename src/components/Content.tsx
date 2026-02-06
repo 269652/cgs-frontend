@@ -43,8 +43,8 @@ const patterns = {
   phone: /^(Tel\.?:\s*|Telefon:?\s*|Mobil:?\s*)([\d\s\-\+\(\)\/]+)$/i,
   fax: /^(Fax\.?:\s*)([\d\s\-\+\(\)\/]+)$/i,
   email: /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/,
-  // Address: captures ONLY organization + street + postal/city (stops before phone/email)
-  address: /(?:Kontakt:\s*\n+\s*)?(.+?)\s*\n+\s*(.+?\s+\d+[a-z]?)\s*\n+\s*(\d{5}\s+.+?)(?=\s*\n\s*(?:Tel|Fax|Mobil|\S+@\S+|\n|$))/im,
+  // Address: organization is optional, captures street + postal/city (stops before phone/email/end)
+  address: /(?:Kontakt:\s*\n+\s*)?(?:(.+?)\s*\n+\s*)?(.+?\s+\d+[a-z]?)\s*\n+\s*(\d{5}\s+.+?)(?=\s*$|\s*\n\s*(?:Tel|Fax|Mobil|\S+@\S+|\n))/im,
 };
 
 // Extract text content from DOM nodes (ignoring HTML tags like <br>)
@@ -194,9 +194,14 @@ function createParserOptions(parentIsLink: boolean = false): HTMLReactParserOpti
 
             if (addressMatch) {
               const [fullMatch, organization, street, postalCity] = addressMatch;
-              // Use full address for Google Maps
-              const fullAddress = `${organization}, ${street}, ${postalCity}`.trim();
+              // Use full address for Google Maps - organization is optional
+              const fullAddress = organization
+                ? `${organization}, ${street}, ${postalCity}`.trim()
+                : `${street}, ${postalCity}`.trim();
               const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+
+              // The first address line gets the icon (org if present, otherwise street)
+              const iconLine = organization || street;
 
               // Process children with both phone/email and address enhancements
               const enhancedChildren = domToReact(element.children as DOMNode[], {
@@ -204,15 +209,15 @@ function createParserOptions(parentIsLink: boolean = false): HTMLReactParserOpti
                   if (domNode.type === 'text') {
                     const textNode = domNode as Text;
                     const text = textNode.data.trim();
-                    
+
                     // First check if this text has phone/email patterns
                     const enhanced = enhanceText(text);
                     if (enhanced !== text) {
                       return <>{enhanced}</>; // Return phone/email enhancement
                     }
-                    
-                    // Only process address if no other enhancement was applied
-                    if (text === organization) {
+
+                    // First address line gets the icon
+                    if (text === iconLine) {
                       return (
                         <span className="inline-flex items-start">
                           <AddressIcon className="flex-shrink-0 w-4 h-4 mr-2 mt-1" />
