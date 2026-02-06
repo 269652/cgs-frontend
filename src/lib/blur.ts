@@ -28,8 +28,8 @@ export async function getBlurDataURL(src: string): Promise<string> {
     const originalHeight = metadata.height || 512;
     
     // Calculate thumbnail size maintaining aspect ratio
-    // Target max dimension of 256px
-    const maxDimension = 256;
+    // Target max dimension of 512px
+    const maxDimension = 512;
     let thumbWidth, thumbHeight;
     
     if (originalWidth > originalHeight) {
