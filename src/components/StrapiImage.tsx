@@ -32,6 +32,7 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
       <Image
         {...props}
         className={`relative z-10 ${props.className || ''}`}
+        unoptimized
       />
     </div>
   );

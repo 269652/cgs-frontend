@@ -37,6 +37,7 @@ export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageC
         {...props}
         className={`relative z-10 ${props.className || ''}`}
         onLoad={() => setLoaded(true)}
+        unoptimized
       />
     </div>
   );
