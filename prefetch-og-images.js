@@ -23,16 +23,31 @@ async function prefetchOGImage(slug) {
   console.log(`📸 Generating OG image for: ${slug}`);
   
   try {
-    const response = await fetch(url);
+    // Set a generous timeout for screenshot generation (3 minutes)
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 180000);
+    
+    const response = await fetch(url, {
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeout);
+    
     if (response.ok) {
       console.log(`✅ Successfully generated OG image for: ${slug}`);
       return true;
     } else {
+      const errorText = await response.text().catch(() => 'Unknown error');
       console.error(`❌ Failed to generate OG image for: ${slug} (${response.status})`);
+      console.error(`   Error: ${errorText}`);
       return false;
     }
   } catch (error) {
-    console.error(`❌ Error generating OG image for ${slug}:`, error.message);
+    if (error.name === 'AbortError') {
+      console.error(`❌ Timeout generating OG image for ${slug} (took > 3 minutes)`);
+    } else {
+      console.error(`❌ Error generating OG image for ${slug}:`, error.message);
+    }
     return false;
   }
 }
@@ -41,25 +56,38 @@ async function prefetchAll() {
   console.log('🚀 Starting OG image prefetch...\n');
   
   // Wait for Next.js to be ready
-  console.log('⏳ Waiting for Next.js to be ready...');
+  console.log('⏳ Waiting for Next.js API route to be ready...');
   let retries = 0;
-  while (retries < 30) {
+  let isReady = false;
+  
+  while (retries < 60) {  // Increased from 30 to 60 retries
     try {
-      const response = await fetch(`${SITE_URL}/api/og?slug=/`);
-      if (response.status !== 404) {
-        console.log('✅ Next.js is ready!\n');
-        break;
+      console.log(`⏳ Attempt ${retries + 1}/60 - checking ${SITE_URL}/api/og?slug=/`);
+      const response = await fetch(`${SITE_URL}/api/og?slug=/`, {
+        timeout: 10000  // 10 second timeout
+      });
+      
+      // Check if we got any response (even an error response means the route exists)
+      if (response) {
+        console.log(`📡 Response status: ${response.status}`);
+        if (response.status !== 404) {
+          console.log('✅ Next.js API route is ready!\n');
+          isReady = true;
+          break;
+        }
       }
     } catch (error) {
-      // Server not ready yet
+      console.log(`⏳ Server not ready yet: ${error.message}`);
     }
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 3000));  // Increased from 2s to 3s
     retries++;
   }
   
-  if (retries >= 30) {
-    console.error('❌ Next.js did not start in time');
-    process.exit(1);
+  if (!isReady) {
+    console.error('❌ Next.js API route did not start in time');
+    console.error('⚠️ Continuing anyway - images will be generated on-demand');
+    // Don't exit, just skip prefetch
+    return;
   }
   
   const slugs = await fetchAllSlugs();
@@ -69,6 +97,7 @@ async function prefetchAll() {
   let success = 0;
   let failed = 0;
   
+  // Process sequentially to avoid overwhelming Puppeteer
   for (const slug of slugs) {
     const result = await prefetchOGImage(slug);
     if (result) {
@@ -76,6 +105,8 @@ async function prefetchAll() {
     } else {
       failed++;
     }
+    // Small delay between generations to avoid memory issues
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
   
   console.log(`\n✨ Prefetch complete!`);
