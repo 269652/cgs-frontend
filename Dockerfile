@@ -7,6 +7,7 @@ WORKDIR /app
 # Install build tools for native modules
 RUN apt-get update && apt-get install -y \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy package.json and package-lock.json
@@ -31,8 +32,11 @@ ENV STRAPI_URL=${STRAPI_URL}
 # Build the Next.js application
 RUN npm run build
 
+# Make startup script executable
+RUN chmod +x start-with-prefetch.sh
+
 # Expose the port
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "run", "start"]
+# Start the application with prefetch
+CMD ["./start-with-prefetch.sh"]

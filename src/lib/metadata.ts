@@ -33,7 +33,7 @@ interface StrapiMetadata {
   appleTouchIcon?: StrapiImage;
 }
 
-export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefined): Promise<Metadata> {
+export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefined, slug?: string): Promise<Metadata> {
   let effectiveMetadata = siteMetadata;
   
   // If no metadata provided, try to fetch the default metadata from Strapi
@@ -93,16 +93,16 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
     siteName: effectiveMetadata.ogSiteName,
   };
 
-  if (effectiveMetadata.ogImage?.url) {
-    const ogImageUrl = imageLink(effectiveMetadata.ogImage.url);
-    if (ogImageUrl && metadata.openGraph) {
-      metadata.openGraph.images = [{
-        url: ogImageUrl,
-        width: effectiveMetadata.ogImage.width || 1200,
-        height: effectiveMetadata.ogImage.height || 630,
-        alt: effectiveMetadata.ogImage.alternativeText || effectiveMetadata.metaTitle,
-      }];
-    }
+  // Set OpenGraph image to use our screenshot API
+  if (slug !== undefined) {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const ogImageUrl = `${baseUrl}/api/og?slug=${encodeURIComponent(slug)}`;
+    metadata.openGraph.images = [{
+      url: ogImageUrl,
+      width: 1200,
+      height: 630,
+      alt: effectiveMetadata.metaTitle || 'Clara-Grunwald-Schule',
+    }];
   }
 
   // Twitter
@@ -114,18 +114,7 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
     creator: effectiveMetadata.twitterCreator,
   };
 
-  if (effectiveMetadata.twitterImage?.url) {
-    const twitterImageUrl = imageLink(effectiveMetadata.twitterImage.url);
-    if (twitterImageUrl && metadata.twitter) {
-      metadata.twitter.images = [twitterImageUrl];
-    }
-  } else if (effectiveMetadata.ogImage?.url) {
-    // Fall back to OG image for Twitter
-    const ogImageUrl = imageLink(effectiveMetadata.ogImage.url);
-    if (ogImageUrl && metadata.twitter) {
-      metadata.twitter.images = [ogImageUrl];
-    }
-  }
+  // Note: Don't set twitter.images here - let Next.js use opengraph-image.tsx instead
 
   // Icons (favicon and apple touch icon)
   const icons: Metadata['icons'] = {};
