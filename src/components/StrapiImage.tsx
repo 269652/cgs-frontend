@@ -1,26 +1,30 @@
-import Image, { ImageProps } from "next/image";
-import { getBlurDataURL } from "@/lib/blur";
+'use client';
 
-type StrapiImageProps = Omit<ImageProps, "placeholder" | "blurDataURL"> & {
-  forceBlurDataURL?: string; // Allow passing pre-generated blur data
+import { useState } from "react";
+import Image, { ImageProps } from "next/image";
+
+type StrapiImageClientProps = ImageProps & {
+  blurDataURL?: string;
+  isSvg?: boolean;
 };
 
-export default async function StrapiImage({ forceBlurDataURL, ...props }: StrapiImageProps) {
-  const src = typeof props.src === "string" ? props.src : "";
-  const blurDataURL = forceBlurDataURL || await getBlurDataURL(src);
-
+export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageClientProps) {
+  const [loaded, setLoaded] = useState(false);
+  
   return (
     <div className="relative overflow-hidden" style={{ display: 'inline-block', width: '100%', height: '100%' }}>
-      {/* Blur placeholder background - embedded in static HTML */}
+      {/* PNG preview for SVGs (sharp, no blur) or blur placeholder for raster images */}
       {blurDataURL && (
         <div
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full transition-opacity duration-300"
           style={{
             backgroundImage: `url("${blurDataURL}")`,
-            backgroundSize: 'cover',
+            backgroundSize: props.style?.objectFit === 'contain' ? 'contain' : 'cover',
             backgroundPosition: 'center',
-            filter: 'blur(4px)',
-            transform: 'scale(1.1)',
+            backgroundRepeat: 'no-repeat',
+            filter: isSvg ? 'none' : 'blur(4px)',
+            transform: isSvg ? 'none' : 'scale(1.05)',
+            opacity: loaded ? 0 : 1,
           }}
           aria-hidden="true"
         />
@@ -28,34 +32,7 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
       <Image
         {...props}
         className={`relative z-10 ${props.className || ''}`}
-      />
-    </div>
-  );
-}
-
-// Client-side version that accepts blur data as prop
-export function StrapiImageClient(props: ImageProps & { blurDataURL?: string }) {
-  const { blurDataURL, ...imageProps } = props;
-  
-  return (
-    <div className="relative overflow-hidden" style={{ display: 'inline-block', width: '100%', height: '100%' }}>
-      {/* Blur placeholder background - embedded in static HTML */}
-      {blurDataURL && (
-        <div
-          className="absolute inset-0 w-full h-full"
-          style={{
-            backgroundImage: `url("${blurDataURL}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(2px)',
-            transform: 'scale(1.1)',
-          }}
-          aria-hidden="true"
-        />
-      )}
-      <Image
-        {...imageProps}
-        className={`relative z-10 ${imageProps.className || ''}`}
+        onLoad={() => setLoaded(true)}
       />
     </div>
   );

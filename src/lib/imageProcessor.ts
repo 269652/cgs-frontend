@@ -4,6 +4,7 @@ export interface ProcessedImage {
   url: string;
   name?: string;
   blurDataURL?: string;
+  isSvg?: boolean;
 }
 
 /**
@@ -22,14 +23,14 @@ export async function processImagesWithBlur(
   const processedImages = await Promise.all(
     validImages.map(async (img) => {
       try {
-        // Skip SVG files - they don't need blur placeholders
         const isSvg = img.url.toLowerCase().endsWith('.svg');
-        const blurDataURL = isSvg ? undefined : await getBlurDataURL(img.url);
+        const blurDataURL = await getBlurDataURL(img.url);
         console.log(`[ImageProcessor] Processed image: ${img.url.substring(0, 60)}... | Blur: ${blurDataURL ? 'Generated' : 'None'}`);
         return {
           url: img.url,
           name: img.name,
           blurDataURL,
+          isSvg,
         };
       } catch (error) {
         console.warn(`Failed to generate blur data for image: ${img.url}`, error);
@@ -53,13 +54,13 @@ export async function processImageWithBlur(
   if (!image || !image.url) return null;
 
   try {
-    // Skip SVG files - they don't need blur placeholders
     const isSvg = image.url.toLowerCase().endsWith('.svg');
-    const blurDataURL = isSvg ? undefined : await getBlurDataURL(image.url);
+    const blurDataURL = await getBlurDataURL(image.url);
     return {
       url: image.url,
       name: image.name,
       blurDataURL,
+      isSvg,
     };
   } catch (error) {
     console.warn(`Failed to generate blur data for image: ${image.url}`, error);

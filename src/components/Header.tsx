@@ -4,13 +4,14 @@ import { Navigation } from "./Navigation";
 import { NavigationCategory } from "@/types/navigation";
 import Impressum from "./Impressum";
 import Link from "next/link";
-import Image from "next/image";
+import { StrapiImageClient } from "./StrapiImage";
 
 export interface HeaderProps {
   logo?: {
     url: string;
     name?: string;
     blurDataURL?: string;
+    isSvg?: boolean;
   };
   impressum?: {
     content: string;
@@ -19,6 +20,7 @@ export interface HeaderProps {
     url: string;
     name?: string;
     blurDataURL?: string;
+    isSvg?: boolean;
   }>;
   navigation?: NavigationCategory[];
 }
@@ -30,29 +32,16 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
       <div className="flex flex-col sm:flex-row items-center">
 
         {logo && (
-        <Link href="/" className="relative">
-          {/* Blur placeholder background for logo - embedded in static HTML */}
-          {logo.blurDataURL && (
-            <div
-              className="absolute inset-0 w-full h-full"
-              style={{
-                backgroundImage: `url("${logo.blurDataURL}")`,
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                filter: 'blur(4px)',
-                transform: 'scale(1.1)',
-              }}
-              aria-hidden="true"
-            />
-          )}
-          <Image
+        <Link href="/" className="block h-[80px]" style={{ width: '200px' }}>
+          <StrapiImageClient
             src={imageLink(logo.url)}
             alt=""
             width={200}
             height={80}
-            className="h-[80px] w-auto relative z-10"
+            className="h-[80px] w-auto"
             style={{ objectFit: "contain" }}
+            blurDataURL={logo.blurDataURL}
+            isSvg={logo.isSvg}
             priority
           />
         </Link>
@@ -69,27 +58,15 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
       <div className="flex flex-col md:flex-row w-full gap-0 max-w-[calc(100vw-0rem)]" >
         {images.map((image, idx) => (
           <div key={idx} className="flex-1 relative overflow-hidden first:hidden md:first:block">
-            {/* Blur placeholder background - embedded in static HTML */}
-            {image.blurDataURL && (
-              <div
-                className="absolute inset-0 w-full h-full"
-                style={{
-                  backgroundImage: `url("${image.blurDataURL}")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  filter: 'blur(2px)',
-                  transform: 'scale(1.1)',
-                }}
-                aria-hidden="true"
-              />
-            )}
-            <Image
+            <StrapiImageClient
               src={imageLink(image.url)}
               alt=""
               width={400}
               height={210}
-              className="w-full h-[300px] md:h-[210px] object-cover relative z-10"
+              className="w-full h-[300px] md:h-[210px] object-cover"
               style={{ objectFit: "cover", objectPosition: "center" }}
+              blurDataURL={image.blurDataURL}
+              isSvg={image.isSvg}
               priority={idx === 0}
             />
             {/* No-JS fallback */}
