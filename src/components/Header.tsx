@@ -30,16 +30,29 @@ const Header: React.FC<HeaderProps> = ({ logo, impressum, images, navigation }) 
       <div className="flex flex-col sm:flex-row items-center">
 
         {logo && (
-        <Link href="/">
+        <Link href="/" className="relative">
+          {/* Blur placeholder background for logo - embedded in static HTML */}
+          {logo.blurDataURL && (
+            <div
+              className="absolute inset-0 w-full h-full"
+              style={{
+                backgroundImage: `url("${logo.blurDataURL}")`,
+                backgroundSize: 'contain',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                filter: 'blur(4px)',
+                transform: 'scale(1.1)',
+              }}
+              aria-hidden="true"
+            />
+          )}
           <Image
             src={imageLink(logo.url)}
             alt=""
             width={200}
             height={80}
-            className="h-[80px] w-auto"
+            className="h-[80px] w-auto relative z-10"
             style={{ objectFit: "contain" }}
-            placeholder={logo.blurDataURL ? "blur" : undefined}
-            blurDataURL={logo.blurDataURL}
             priority
           />
         </Link>
