@@ -94,7 +94,7 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
   };
 
   // Set OpenGraph image to use our screenshot API
-  if (slug !== undefined && metadata.openGraph) {
+  if (slug !== undefined) {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
     const ogImageUrl = `${baseUrl}/api/og?slug=${encodeURIComponent(slug)}`;
     metadata.openGraph.images = [{
@@ -139,4 +139,3 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
 
   return metadata;
 }
-
