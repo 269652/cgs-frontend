@@ -62,7 +62,7 @@ h1, .h1, h2, .h2 {
 /* Markdown content styling */
 
 .content-body  a , .content-body-dark  a, .teaser-copy a {
-    @apply  font-bold text-green-600 dark:text-green-400 underline;
+    @apply  font-bold text-green-700 dark:text-green-400 underline;
 
 }
 .content-body  h1 , .content-body-dark  h1 {
