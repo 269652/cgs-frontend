@@ -1,6 +1,22 @@
 import axios from 'axios';
 
 const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
+const TIMEOUT = 30000;
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000;
+
+async function fetchWithRetry<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === MAX_RETRIES) throw error;
+      console.warn(`Metadata fetch attempt ${attempt}/${MAX_RETRIES} failed, retrying in ${RETRY_DELAY}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+    }
+  }
+  throw new Error('Unreachable');
+}
 
 interface StrapiMetadata {
   metaTitle?: string;
@@ -68,18 +84,21 @@ export async function fetchDefaultMetadata(): Promise<{ data: StrapiMetadata | n
   }
 
   try {
-    const response = await axios.get<DefaultMetadataResponse>(
-      `${STRAPI_URL}/api/site-metadatas`,
-      {
-        params: {
-          populate: '*',
-          filters: {
-            name: {
-              $eq: 'Default'
+    const response = await fetchWithRetry(() =>
+      axios.get<DefaultMetadataResponse>(
+        `${STRAPI_URL}/api/site-metadatas`,
+        {
+          params: {
+            populate: '*',
+            filters: {
+              name: {
+                $eq: 'Default'
+              }
             }
-          }
+          },
+          timeout: TIMEOUT,
         }
-      }
+      )
     );
 
     const defaultEntry = response.data?.data?.[0];

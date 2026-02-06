@@ -1,5 +1,22 @@
 import axios from 'axios';
 
+const TIMEOUT = 30000;
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000;
+
+async function fetchWithRetry<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === MAX_RETRIES) throw error;
+      console.warn(`Strapi fetch attempt ${attempt}/${MAX_RETRIES} failed, retrying in ${RETRY_DELAY}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+    }
+  }
+  throw new Error('Unreachable');
+}
+
 const populateQuery = {
   populate: {
     header: {
@@ -52,11 +69,13 @@ const populateQuery = {
 
 export async function fetchPages() {
   try {
-    const res = await axios.get(`${process.env.STRAPI_URL}/api/pages`, {
-      params: populateQuery,
-      timeout: 5000 // 5 second timeout
+    return await fetchWithRetry(async () => {
+      const res = await axios.get(`${process.env.STRAPI_URL}/api/pages`, {
+        params: populateQuery,
+        timeout: TIMEOUT,
+      });
+      return res.data;
     });
-    return res.data;
   } catch (error) {
     console.error('Failed to fetch pages from Strapi:', error);
     return { data: [], error: 'Strapi connection failed' };
@@ -70,14 +89,16 @@ export async function fetchAllSlugs(): Promise<string[]> {
 
   try {
     while (hasMore) {
-      const res = await axios.get(`${process.env.STRAPI_URL}/api/pages`, {
-        params: {
-          'fields[0]': 'slug',
-          'pagination[page]': page,
-          'pagination[pageSize]': 100,
-        },
-        timeout: 5000,
-      });
+      const res = await fetchWithRetry(async () =>
+        axios.get(`${process.env.STRAPI_URL}/api/pages`, {
+          params: {
+            'fields[0]': 'slug',
+            'pagination[page]': page,
+            'pagination[pageSize]': 100,
+          },
+          timeout: TIMEOUT,
+        })
+      );
 
       const entries = res.data?.data || [];
       for (const entry of entries) {
@@ -99,14 +120,16 @@ export async function fetchAllSlugs(): Promise<string[]> {
 
 export async function fetchPageBySlug(slug: string) {
   try {
-    const res = await axios.get(`${process.env.STRAPI_URL}/api/pages`, {
-      params: {
-        'filters[slug][$eq]': slug,
-        ...populateQuery
-      },
-      timeout: 5000 // 5 second timeout
+    return await fetchWithRetry(async () => {
+      const res = await axios.get(`${process.env.STRAPI_URL}/api/pages`, {
+        params: {
+          'filters[slug][$eq]': slug,
+          ...populateQuery
+        },
+        timeout: TIMEOUT,
+      });
+      return res.data;
     });
-    return res.data;
   } catch (error) {
     console.error(`Failed to fetch page with slug "${slug}" from Strapi:`, error);
     return { data: [], error: 'Strapi connection failed' };
