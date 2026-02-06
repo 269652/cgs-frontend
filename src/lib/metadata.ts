@@ -33,7 +33,7 @@ interface StrapiMetadata {
   appleTouchIcon?: StrapiImage;
 }
 
-export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefined, slug?: string): Promise<Metadata> {
+export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefined): Promise<Metadata> {
   let effectiveMetadata = siteMetadata;
   
   // If no metadata provided, try to fetch the default metadata from Strapi
@@ -93,19 +93,7 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
     siteName: effectiveMetadata.ogSiteName,
   };
 
-  // Set OpenGraph image to use our screenshot API
-  if (slug !== undefined && metadata.openGraph) {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const ogImageUrl = `${baseUrl}/api/og?slug=${encodeURIComponent(slug)}`;
-    metadata.openGraph.images = [{
-      url: ogImageUrl,
-      width: 1200,
-      height: 630,
-      alt: effectiveMetadata.metaTitle || 'Clara-Grunwald-Schule',
-    }];
-  }
-
-  // Twitter
+  // Note: OG images are handled by opengraph-image.tsx files\n\n  // Twitter
   metadata.twitter = {
     card: effectiveMetadata.twitterCard || 'summary_large_image',
     title: effectiveMetadata.twitterTitle || effectiveMetadata.ogTitle || effectiveMetadata.metaTitle,
