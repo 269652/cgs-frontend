@@ -14,15 +14,20 @@ export default async function StrapiImage({ forceBlurDataURL, ...props }: Strapi
       {/* Blur placeholder background - embedded in static HTML */}
       {blurDataURL && (
         <div
-          className="absolute inset-0 w-full h-full"
-          style={{
-            backgroundImage: `url("${blurDataURL}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(4px)',
-          }}
+          className="absolute inset-0 w-full h-full overflow-hidden"
           aria-hidden="true"
-        />
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: '-2px', // Extend by half the blur radius (4px / 2 = 2px)
+              backgroundImage: `url("${blurDataURL}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'blur(4px)',
+            }}
+          />
+        </div>
       )}
       <Image
         {...props}

@@ -16,17 +16,22 @@ export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageC
       {/* PNG preview for SVGs (sharp, no blur) or blur placeholder for raster images */}
       {blurDataURL && (
         <div
-          className="absolute inset-0 w-full h-full transition-opacity duration-300"
-          style={{
-            backgroundImage: `url("${blurDataURL}")`,
-            backgroundSize: props.style?.objectFit === 'contain' ? 'contain' : 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: isSvg ? 'none' : 'blur(4px)',
-            opacity: loaded ? 0 : 1,
-          }}
+          className="absolute inset-0 w-full h-full overflow-hidden transition-opacity duration-300"
+          style={{ opacity: loaded ? 0 : 1 }}
           aria-hidden="true"
-        />
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: isSvg ? '0' : '-2px', // Extend by half the blur radius for blurred images
+              backgroundImage: `url("${blurDataURL}")`,
+              backgroundSize: props.style?.objectFit === 'contain' ? 'contain' : 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              filter: isSvg ? 'none' : 'blur(4px)',
+            }}
+          />
+        </div>
       )}
       <Image
         {...props}
