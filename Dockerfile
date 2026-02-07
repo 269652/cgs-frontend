@@ -72,11 +72,8 @@ ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 # Build the Next.js application
 RUN npm run build
 
-# Make startup script executable
-RUN chmod +x start-with-prefetch.sh
-
 # Expose the port
 EXPOSE 3000
 
-# Start the application with prefetch
-CMD ["./start-with-prefetch.sh"]
+# Start the application
+CMD ["npm", "run", "start"]

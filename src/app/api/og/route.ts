@@ -42,7 +42,7 @@ async function generateScreenshot(slug: string, cachePath: string): Promise<Buff
   await page.setViewport({ 
     width: OG_WIDTH, 
     height: OG_HEIGHT,
-    deviceScaleFactor: 2, // 2x resolution for Retina/HiDPI displays
+    deviceScaleFactor: 1, // 1x scale to keep file size down
   });
   
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
@@ -76,10 +76,10 @@ async function generateScreenshot(slug: string, cachePath: string): Promise<Buff
   await new Promise(resolve => setTimeout(resolve, 500));
   
   const screenshot = await page.screenshot({
-    type: 'png',
+    type: 'jpeg',
+    quality: 75, // Compress to stay under 600KB for WhatsApp
     clip: { x: 0, y: 0, width: OG_WIDTH, height: OG_HEIGHT },
     omitBackground: false,
-    optimizeForSpeed: false, // Prioritize quality over speed
   });
   
   await browser.close();
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const slug = searchParams.get('slug') || '/';
   const cacheKey = slug.replace(/\//g, '_') || 'home';
-  const cachePath = path.join(CACHE_DIR, `${cacheKey}.png`);
+  const cachePath = path.join(CACHE_DIR, `${cacheKey}.jpg`);
   
   try {
     await ensureCacheDir();
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
         console.log(`✅ Cache is fresh for ${slug}`);
         return new NextResponse(Buffer.from(cachedImage), {
           headers: {
-            'Content-Type': 'image/png',
+            'Content-Type': 'image/jpeg',
             'Cache-Control': 'public, max-age=3600, s-maxage=3600',
             'X-Cache': 'HIT',
           },
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
         
         return new NextResponse(Buffer.from(cachedImage), {
           headers: {
-            'Content-Type': 'image/png',
+            'Content-Type': 'image/jpeg',
             'Cache-Control': 'public, max-age=30, s-maxage=30, stale-while-revalidate=86400',
             'X-Cache': 'STALE',
           },
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
       if (age < 30 * 1000) {
         return new NextResponse(Buffer.from(cachedImage), {
           headers: {
-            'Content-Type': 'image/png',
+            'Content-Type': 'image/jpeg',
             'Cache-Control': 'public, max-age=30, s-maxage=30',
             'X-Cache': 'HIT',
           },
@@ -158,7 +158,7 @@ export async function GET(request: NextRequest) {
     
     return new NextResponse(Buffer.from(screenshot), {
       headers: {
-        'Content-Type': 'image/png',
+        'Content-Type': 'image/jpeg',
         'Cache-Control': 'public, max-age=3600, s-maxage=3600',
         'X-Cache': 'MISS',
       },
