@@ -28,7 +28,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ category, isOpen, onTog
       <div>
         <button
           type="button"
-          className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-800 rounded-md transition-colors duration-200 touch-manipulation"
+          className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 bg-background dark:hover:bg-gray-800 rounded-md transition-colors duration-200 touch-manipulation"
         >
           <span className="font-medium">{category.name}</span>
         </button>
@@ -51,7 +51,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ category, isOpen, onTog
           e.preventDefault();
           onToggle();
         }}
-        className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:!bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-200 touch-manipulation"
+        className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 bg-background hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-200 touch-manipulation"
         aria-haspopup="true"
         aria-expanded={showDropdown}
       >
@@ -69,7 +69,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ category, isOpen, onTog
       </button>
 
       {showDropdown && (
-        <div className={`${isMobileMenu ? 'relative w-full' : 'absolute top-full left-0 w-64'} bg-white dark:!bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 z-50 flex flex-col max-h-96 overflow-y-auto`}>
+        <div className={`${isMobileMenu ? 'relative w-full' : 'absolute top-full left-0 w-64'} bg-background shadow-lg rounded-md border border-gray-200 dark:border-gray-700 z-50 flex flex-col max-h-96 overflow-y-auto`}>
           {sortedEntries.map((entry) => (
             <Link
               key={entry.id}
@@ -146,7 +146,7 @@ export const Navigation: React.FC<NavigationProps> = ({ categories }) => {
       </button>
 
       {/* Desktop horizontal nav */}
-      <div className="hidden sm:flex flex-wrap items-center space-x-1 dark:bg-gray-800">
+      <div className="hidden sm:flex flex-wrap items-center space-x-1 bg-background">
         {sortedCategories.map((category) => (
           <NavigationItem
             key={category.id}
@@ -161,7 +161,7 @@ export const Navigation: React.FC<NavigationProps> = ({ categories }) => {
 
       {/* Mobile vertical nav */}
       {mobileMenuOpen && (
-        <div className="sm:hidden flex flex-col bg-white dark:!bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg absolute top-full left-0 right-0 z-50 max-h-[80vh] overflow-y-auto">
+        <div className="sm:hidden flex flex-col bg-background border border-gray-200 dark:border-gray-700 rounded-md shadow-lg absolute top-full left-0 right-0 z-50 max-h-[80vh] overflow-y-auto">
           {sortedCategories.map((category) => (
             <NavigationItem
               key={category.id}

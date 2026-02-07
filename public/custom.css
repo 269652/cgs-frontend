@@ -1,0 +1,399 @@
+/* 
+   This file is not loaded, it is served from Strapi CSS content type. 
+   It's just here for backup purposes
+
+   If you start with a fresh database, make sure to include 
+*/
+
+:root {
+  --accent: #15803d; /* green-700 */
+  --background: #F3F4F6;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1f2937;
+    --foreground: #ededed;
+    --accent: #4ade80; /* green-400 */
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1,
+.h1 {
+  font-size: 7rem;
+}
+
+h1,
+.h1,
+h2,
+.h2 {
+  font-size: 2.25rem; /* 36px */
+}
+
+/* Markdown content styling */
+
+.content-body a,
+.content-body-dark a,
+.teaser-copy a {
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body a,
+  .content-body-dark a,
+  .teaser-copy a {
+    color: var(--accent);
+  }
+}
+
+.content-body h1,
+.content-body-dark h1 {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body h1,
+  .content-body-dark h1 {
+    color: var(--accent);
+  }
+}
+
+.content-body h2,
+.content-body-dark h2 {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body h2,
+  .content-body-dark h2 {
+    color: var(--accent);
+  }
+}
+
+.content-body h3,
+.content-body-dark h3 {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 700;
+  color: #4b5563; /* gray-600 */
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body h3,
+  .content-body-dark h3 {
+    color: #9ca3af; /* gray-400 */
+  }
+}
+
+.content-body p,
+.content-body-dark p {
+  margin-bottom: 1rem;
+  color: #4b5563; /* gray-600 */
+  line-height: 1.75;
+  text-align: left;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body p,
+  .content-body-dark p {
+    color: #d1d5db; /* gray-300 */
+  }
+}
+
+.content-body ul,
+.content-body-dark ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.content-body li,
+.content-body-dark li {
+  margin-bottom: 0.5rem;
+  color: #4b5563; /* gray-600 */
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body li,
+  .content-body-dark li {
+    color: #d1d5db; /* gray-300 */
+  }
+}
+
+.content-body li:before,
+.content-body-dark li:before {
+  content: "–";
+  color: var(--accent);
+  font-weight: 700;
+  position: absolute;
+  left: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body li:before,
+  .content-body-dark li:before {
+    color: var(--accent);
+  }
+}
+
+.content-body strong,
+.content-body-dark strong {
+  font-weight: 700;
+  color: #1f2937; /* gray-800 */
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body strong,
+  .content-body-dark strong {
+    color: #e5e7eb; /* gray-200 */
+  }
+}
+
+.content-body em,
+.content-body-dark em {
+  font-style: italic;
+}
+
+/* Dark variant styling */
+.content-body-dark h1,
+.content-body-dark-dark h1 {
+  font-size: 2.25rem; /* 36px */
+  font-weight: 700;
+  color: #374151; /* gray-700 */
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body-dark h1,
+  .content-body-dark-dark h1 {
+    color: #d1d5db; /* gray-300 */
+  }
+}
+
+.content-body-dark h2,
+.content-body-dark-dark h2 {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body-dark h2,
+  .content-body-dark-dark h2 {
+    color: var(--accent);
+  }
+}
+
+.content-body-dark h3,
+.content-body-dark-dark h3 {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body-dark h3,
+  .content-body-dark-dark h3 {
+    color: var(--accent);
+  }
+}
+
+.content-body-dark p,
+.content-body-dark-dark p {
+  margin-bottom: 0.75rem;
+  color: #4b5563; /* gray-600 */
+  line-height: 1.75;
+  text-align: left;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body-dark p,
+  .content-body-dark-dark p {
+    color: #d1d5db; /* gray-300 */
+  }
+}
+
+.content-body-dark ul,
+.content-body-dark-dark ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.content-body-dark li,
+.content-body-dark-dark li {
+  margin-bottom: 0.5rem;
+  color: #4b5563; /* gray-600 */
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body-dark li,
+  .content-body-dark-dark li {
+    color: #d1d5db; /* gray-300 */
+  }
+}
+
+.content-body-dark li:before,
+.content-body-dark-dark li:before {
+  content: "–";
+  color: var(--accent);
+  font-weight: 700;
+  position: absolute;
+  left: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body-dark li:before,
+  .content-body-dark-dark li:before {
+    color: var(--accent);
+  }
+}
+
+.content-body-dark strong,
+.content-body-dark-dark strong {
+  font-weight: 700;
+  color: #1f2937; /* gray-800 */
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-body-dark strong,
+  .content-body-dark-dark strong {
+    color: #e5e7eb; /* gray-200 */
+  }
+}
+
+.content-body-dark em,
+.content-body-dark-dark em {
+  font-style: italic;
+}
+
+/* Base table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #111827; /* dark text for light mode */
+  background-color: transparent;
+}
+
+/* Header row */
+thead th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e5e7eb; /* light gray */
+  background-color: #f9fafb;
+}
+
+/* Body cells */
+tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+
+/* Zebra striping */
+tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Hover effect */
+tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+/* First column emphasis */
+tbody td:first-child {
+  font-weight: 500;
+}
+
+/* Responsive handling */
+@media (max-width: 640px) {
+  table {
+    font-size: 0.9rem;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 0.5rem;
+  }
+
+  tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    border: none;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    margin-right: 1rem;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  table {
+    color: #d1d5db; /* lighter text */
+  }
+
+  thead th {
+    border-bottom-color: #374151; /* darker gray */
+    background-color: #1f2937; /* dark header bg */
+  }
+
+  tbody td {
+    border-bottom-color: #374151;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #111827; /* dark zebra stripe */
+  }
+
+  tbody tr:hover {
+    background-color: #374151; /* dark hover */
+  }
+
+  tbody tr {
+    border-color: #374151;
+  }
+}

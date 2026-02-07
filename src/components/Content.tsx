@@ -283,8 +283,8 @@ const Content: React.FC<ContentProps> = async ({ content, variant = 'default', t
   };
 
   const containerStyles = {
-    default: 'max-w-full font-sans leading-relaxed text-gray-700 dark:text-gray-300 dark:bg-gray-800 p-2 md:px-8',
-    dark: 'max-w-full font-sans leading-relaxed text-gray-100 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 px-8 py-1 rounded-lg mt-8'
+    default: 'max-w-full font-sans leading-relaxed text-gray-700 dark:text-gray-300 bg-background p-2 md:px-8',
+    dark: 'max-w-full font-sans leading-relaxed text-gray-100 dark:text-gray-200 bg-gray-100 bg-background px-8 py-1 rounded-lg mt-8'
   };
 
   return (

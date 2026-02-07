@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { fetchPageBySlug, fetchAllSlugs } from "@/lib/sources/strapi/pages";
 import { getNavigationData } from "@/lib/sources/strapi/navigation";
 import Page from "@/components/Page";
+import StrapiCustomCSS from "@/components/StrapiCustomCSS";
 import { buildMetadata } from "@/lib/metadata";
 import { notFound } from "next/navigation";
 
@@ -22,7 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Home({ params }: Props) {
-  const pageData = await fetchPageBySlug((await params).slug);
+  const slug = (await params).slug;
+  const pageData = await fetchPageBySlug(slug);
   const navigation = await getNavigationData();
   
   // Check for Strapi connection error (500)
@@ -43,6 +45,7 @@ export default async function Home({ params }: Props) {
   const groups = page.groups || [];
   return (
     <div className="font-sans items-center justify-items-center min-h-screen bg-white dark:bg-gray-900">
+      <StrapiCustomCSS slug={slug} />
       <main className="flex flex-col items-center w-full">
         <Page groups={groups} navigation={navigation} {...page} />
       </main>

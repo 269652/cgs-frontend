@@ -98,7 +98,7 @@ const Page: React.FC<PageProps> = async ({
   return (
     <div className="min-h-screen flex flex-col w-full  dark:bg-gray-900">
       {processedHeader && <Header {...processedHeader} navigation={navigation} />}
-      <main className="dark flex-1 w-full  dark:bg-gray-800">
+      <main className="dark flex-1 w-full  bg-background">
         {renderPageContent()}
       </main>
       {footer && <Footer {...footer} />}

@@ -181,7 +181,7 @@ export const Section: React.FC<SectionProps> = async ({
         isInline
           ? "p-1 md:p-2 !px-8"
           : "min-h-screen p-2 md:p-8"
-      } ${!background && !bgImage ? " bg-white dark:!bg-gray-800" : ""}`}
+      } ${!background && !bgImage ? " bg-background" : ""}`}
       style={{
         backgroundColor: background || undefined,
         backgroundImage: bgImage ? `url(${imageLink(bgImage.url)})` : undefined,
@@ -227,7 +227,7 @@ const Group: React.FC<GroupProps> = async ({
   const sectionsAreInline = hasContent;
 
   return (
-    <div className={`w-full  dark:bg-gray-800 ${backgroundImage ? "relative" : ""}`}>
+    <div className={`w-full  bg-background ${backgroundImage ? "relative" : ""}`}>
       {backgroundImage && (
         <div className="fixed inset-0 z-0">
           <StrapiImage

@@ -85,7 +85,7 @@ const ArticleClassic: React.FC<TeaserProps> = ({
   ctaLabel,
 }) => (
   <div
-    className="bg-[#fafafa] dark:bg-gray-800 rounded-xl shadow dark:shadow-gray-900 max-w-sm mx-auto p-6 flex flex-col items-center"
+    className="bg-[#fafafa] bg-background rounded-xl shadow dark:shadow-gray-900 max-w-sm mx-auto p-6 flex flex-col items-center"
     style={{ width: "100%", textAlign: "center" }}
   >
     <div className="w-full mb-4 rounded-lg overflow-hidden">
@@ -130,7 +130,7 @@ const ArticleModern: React.FC<TeaserProps> = ({
   ctaLink,
   ctaLabel,
 }) => (
-  <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl shadow-lg dark:shadow-gray-900 max-w-sm mx-auto p-6 flex flex-col items-center w-full">
+  <div className="bg-white bg-background border dark:border-gray-700 rounded-xl shadow-lg dark:shadow-gray-900 max-w-sm mx-auto p-6 flex flex-col items-center w-full">
     <div className="w-full mb-4 rounded-lg overflow-hidden">
       <TeaserImages images={images} image={image} title={title} className="rounded-lg" />
     </div>
@@ -266,7 +266,7 @@ const TeaserModern: React.FC<TeaserProps> = ({
   ctaLink,
   ctaLabel,
 }) => (
-  <div className="relative flex flex-col md:flex-row items-center bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl shadow-lg dark:shadow-gray-900 overflow-hidden max-w-3xl mx-auto my-8 w-full">
+  <div className="relative flex flex-col md:flex-row items-center bg-white bg-background border dark:border-gray-700 rounded-xl shadow-lg dark:shadow-gray-900 overflow-hidden max-w-3xl mx-auto my-8 w-full">
     {/* Mobile: image on top, text below */}
     <div className="w-full md:w-1/2 relative mb-4 md:mb-0 overflow-hidden">
       <TeaserImages images={images} image={image} title={title} />
@@ -354,7 +354,7 @@ const TeaserProject: React.FC<TeaserProps> = ({
   className,
 }) => (
   <article
-    className={`group  dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/50 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-900/70 transition-all duration-300 flex flex-col h-full border border-black shadow-sm ${className || ''}`}
+    className={`group  bg-background rounded-2xl shadow-md dark:shadow-gray-900/50 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-900/70 transition-all duration-300 flex flex-col h-full border border-black shadow-sm ${className || ''}`}
   >
     {/* Image section */}
     {images && images.length > 0 && (

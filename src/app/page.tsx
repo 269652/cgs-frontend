@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Page from "../components/Page";
 import { fetchPageBySlug, fetchPages } from "../lib/sources/strapi/pages";
 import { getNavigationData } from "../lib/sources/strapi/navigation";
+import StrapiCustomCSS from "@/components/StrapiCustomCSS";
 import { buildMetadata } from "../lib/metadata";
 import { notFound } from "next/navigation";
 
@@ -36,8 +37,9 @@ export default async function Home() {
   
   return (
     <div className="font-sans items-center justify-items-center min-h-screen max-w-screen bg-white dark:bg-gray-900">
+      <StrapiCustomCSS slug="/" />
       <main className="flex flex-col items-center w-full">
-        <Page 
+        <Page
           {...page}
         />
       </main>
