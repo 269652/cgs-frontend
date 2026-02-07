@@ -10,9 +10,18 @@ type StrapiImageClientProps = ImageProps & {
 
 export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageClientProps) {
   const [loaded, setLoaded] = useState(false);
+  const [showImage, setShowImage] = useState(false);
   
   // Determine container sizing - if fill or className present, use flexible sizing
   const useFlexibleSize = props.fill || props.className?.includes('w-') || props.className?.includes('h-');
+  
+  const handleLoad = () => {
+    setLoaded(true);
+    // Wait 400ms before starting the fade-in transition
+    setTimeout(() => {
+      setShowImage(true);
+    }, 0);
+  };
   
   return (
     <div className="relative" style={{ 
@@ -35,8 +44,8 @@ export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageC
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             filter: isSvg ? 'none' : 'blur(4px)',
-            opacity: loaded ? 0 : 1,
-            transition: 'opacity 0.3s',
+            opacity: showImage ? 0 : 1,
+            transition: 'opacity 0.4s',
           }}
           aria-hidden="true"
         />
@@ -44,7 +53,12 @@ export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageC
       <Image
         {...props}
         className={`relative z-10 ${props.className || ''}`}
-        onLoad={() => setLoaded(true)}
+        style={{
+          ...props.style,
+          opacity: showImage ? 1 : 0,
+          transition: 'opacity 0.4s',
+        }}
+        onLoad={handleLoad}
         unoptimized
       />
     </div>
