@@ -26,7 +26,10 @@ async function fetchActiveCSS(slug?: string): Promise<string> {
     const response = await fetch(
       `${STRAPI_URL}/api/custom-csses?${params.toString()}`,
       {
-        next: { revalidate: 60 }
+        next: { 
+          revalidate: 30,
+          tags: ['custom-css'] 
+        }
       }
     );
 

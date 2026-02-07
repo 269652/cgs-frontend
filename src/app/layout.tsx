@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   description: "Welcome to Clara Grunwald Schule",
 };
 
+// Revalidate layout every 30 seconds to pick up custom CSS changes
+export const revalidate = 30;
+
 export default function RootLayout({
   children,
 }: Readonly<{
