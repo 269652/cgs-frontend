@@ -17,10 +17,8 @@ export function StrapiImageClient({ blurDataURL, isSvg, ...props }: StrapiImageC
   
   const handleLoad = () => {
     setLoaded(true);
-    // Wait 400ms before starting the fade-in transition
-    setTimeout(() => {
-      setShowImage(true);
-    }, 0);
+    // Trigger fade-in transition immediately
+    setShowImage(true);
   };
   
   return (
