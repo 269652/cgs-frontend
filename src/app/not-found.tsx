@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "404 - Seite nicht gefunden",
     description: "Die von Ihnen gesuchte Seite existiert nicht oder wurde verschoben.",
-    images: ["/api/og?slug=404"]
+    images: ["/api/og?slug=404"] 
   }
 };
 
