@@ -8,7 +8,7 @@ import { buildMetadata } from "../lib/metadata";
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await fetchPageBySlug('/');
   const page = pageData.data?.[0];
-  return await buildMetadata(page?.siteMetadata);
+  return await buildMetadata(page?.siteMetadata, '/');
 }
 
 export default async function Home() {

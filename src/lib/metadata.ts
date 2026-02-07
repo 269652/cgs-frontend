@@ -33,7 +33,10 @@ interface StrapiMetadata {
   appleTouchIcon?: StrapiImage;
 }
 
-export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefined): Promise<Metadata> {
+export async function buildMetadata(
+  siteMetadata: StrapiMetadata | null | undefined,
+  slug?: string
+): Promise<Metadata> {
   let effectiveMetadata = siteMetadata;
   
   // If no metadata provided, try to fetch the default metadata from Strapi
@@ -94,7 +97,32 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
     siteName: effectiveMetadata.ogSiteName,
   };
 
-  // Note: OG images are handled by opengraph-image.tsx files
+  // Use screenshot API for OG image if no explicit image is set in Strapi
+  if (effectiveMetadata.ogImage?.url) {
+    const ogImageUrl = imageLink(effectiveMetadata.ogImage.url);
+    if (ogImageUrl && metadata.openGraph) {
+      console.log('✅ Using Strapi OG image:', ogImageUrl);
+      metadata.openGraph.images = [{
+        url: ogImageUrl,
+        width: effectiveMetadata.ogImage.width || 1200,
+        height: effectiveMetadata.ogImage.height || 630,
+        alt: effectiveMetadata.ogImage.alternativeText || effectiveMetadata.metaTitle || 'Open Graph Image',
+      }];
+    }
+  } else if (slug && metadata.openGraph) {
+    // No explicit OG image set - use screenshot
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const screenshotUrl = `${baseUrl}/api/og?slug=${encodeURIComponent(slug)}`;
+    console.log('📸 Using screenshot OG image:', screenshotUrl);
+    metadata.openGraph.images = [{
+      url: screenshotUrl,
+      width: 1200,
+      height: 630,
+      alt: effectiveMetadata.metaTitle || 'Page Screenshot',
+    }];
+  } else {
+    console.log('⚠️ No OG image set - slug:', slug, 'openGraph:', !!metadata.openGraph);
+  }
 
   // Twitter
   metadata.twitter = {
@@ -105,7 +133,22 @@ export async function buildMetadata(siteMetadata: StrapiMetadata | null | undefi
     creator: effectiveMetadata.twitterCreator,
   };
 
-  // Note: Don't set twitter.images here - let Next.js use opengraph-image.tsx instead
+  // Use screenshot API for Twitter image if no explicit image is set in Strapi
+  if (effectiveMetadata.twitterImage?.url) {
+    const twitterImageUrl = imageLink(effectiveMetadata.twitterImage.url);
+    if (twitterImageUrl && metadata.twitter) {
+      console.log('✅ Using Strapi Twitter image:', twitterImageUrl);
+      metadata.twitter.images = [twitterImageUrl];
+    }
+  } else if (slug && metadata.twitter) {
+    // No explicit Twitter image set - use screenshot
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const screenshotUrl = `${baseUrl}/api/og?slug=${encodeURIComponent(slug)}`;
+    console.log('📸 Using screenshot Twitter image:', screenshotUrl);
+    metadata.twitter.images = [screenshotUrl];
+  } else {
+    console.log('⚠️ No Twitter image set - slug:', slug, 'twitter:', !!metadata.twitter);
+  }
 
   // Icons (favicon and apple touch icon)
   const icons: Metadata['icons'] = {};
