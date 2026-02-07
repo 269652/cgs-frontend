@@ -20,6 +20,21 @@ async function ensureCacheDir() {
 }
 
 async function getPageLastUpdated(slug: string): Promise<Date | null> {
+  // Special handling for 404 page - use not-found-page endpoint
+  if (slug === '404') {
+    try {
+      const response = await fetch(`${STRAPI_URL}/api/not-found-page?fields[0]=updatedAt`);
+      const data = await response.json();
+      if (data.data?.updatedAt) {
+        return new Date(data.data.updatedAt);
+      }
+    } catch (error) {
+      console.error('Error fetching 404 page update time:', error);
+    }
+    return null;
+  }
+  
+  // Regular pages
   try {
     const response = await fetch(`${STRAPI_URL}/api/pages?filters[slug][$eq]=${slug}&fields[0]=updatedAt`);
     const data = await response.json();
@@ -49,7 +64,11 @@ async function generateScreenshot(slug: string, cachePath: string): Promise<Buff
   if (!baseUrl) {
     throw new Error('NEXT_PUBLIC_SITE_URL not set');
   }
-  const url = `${baseUrl}${slug}`;
+  
+  // Special handling for 404 page - navigate to a non-existent page to trigger 404
+  const url = slug === '404' 
+    ? `${baseUrl}/this-page-does-not-exist-404` 
+    : `${baseUrl}${slug}`;
   
   console.log('Generating OG image for:', url);
   
