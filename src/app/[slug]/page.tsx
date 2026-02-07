@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { fetchPageBySlug, fetchAllSlugs } from "@/lib/sources/strapi/pages";
 import { getNavigationData } from "@/lib/sources/strapi/navigation";
 import Page from "@/components/Page";
-import ErrorDisplay from "@/components/ErrorDisplay";
 import { buildMetadata } from "@/lib/metadata";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -25,14 +25,9 @@ export default async function Home({ params }: Props) {
   const pageData = await fetchPageBySlug((await params).slug);
   const navigation = await getNavigationData();
   
-  // Check for Strapi connection error
+  // Check for Strapi connection error (500)
   if (pageData.error) {
-    return (
-      <ErrorDisplay 
-        error={pageData.error} 
-        retryUrl={`/${(await params).slug}`}
-      />
-    );
+    throw new Error(`Failed to fetch page data: ${pageData.error}`);
   }
   
   // Strapi v5 returns { data: [...] }
@@ -42,12 +37,7 @@ export default async function Home({ params }: Props) {
   
   // Handle case where no page is found (404)
   if (!page.id && pages.length === 0) {
-    return (
-      <ErrorDisplay 
-        variant="404"
-        message={`The page "${(await params).slug}" could not be found.`}
-      />
-    );
+    notFound();
   }
   
   const groups = page.groups || [];

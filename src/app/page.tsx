@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import Page from "../components/Page";
-import ErrorDisplay from "../components/ErrorDisplay";
 import { fetchPageBySlug, fetchPages } from "../lib/sources/strapi/pages";
 import { getNavigationData } from "../lib/sources/strapi/navigation";
 import { buildMetadata } from "../lib/metadata";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await fetchPageBySlug('/');
@@ -15,9 +15,9 @@ export default async function Home() {
   const pageData = await fetchPageBySlug('/');
   const navigation = await getNavigationData();
   
-  // Check for Strapi connection error
+  // Check for Strapi connection error (500)
   if (pageData.error) {
-    return <ErrorDisplay error={pageData.error} />;
+    throw new Error(`Failed to fetch homepage data: ${pageData.error}`);
   }
   
   // Strapi v5 returns { data: [...] }
@@ -25,15 +25,9 @@ export default async function Home() {
   // Assume first page for demo
   const page = pages[0] || {};
   
-  // Handle case where no homepage is found
+  // Handle case where no homepage is found (404)
   if (!page.id && pages.length === 0) {
-    return (
-      <ErrorDisplay 
-        variant="404"
-        title="Homepage Not Found"
-        message="The homepage could not be found. Please check your content management system."
-      />
-    );
+    notFound();
   }
   
   const groups = page.groups || [];

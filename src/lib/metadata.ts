@@ -29,7 +29,6 @@ interface StrapiMetadata {
   twitterCreator?: string;
   canonicalUrl?: string;
   robots?: string;
-  themeColor?: string;
   appleTouchIcon?: StrapiImage;
 }
 
@@ -74,11 +73,6 @@ export async function buildMetadata(
   // Robots
   if (effectiveMetadata.robots) {
     metadata.robots = effectiveMetadata.robots;
-  }
-
-  // Theme color
-  if (effectiveMetadata.themeColor) {
-    metadata.themeColor = effectiveMetadata.themeColor;
   }
 
   // Canonical URL
