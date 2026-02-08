@@ -25,8 +25,7 @@ export const metadata: Metadata = {
   }
 };
 
-// Revalidate every 30 seconds to pick up changes from Strapi
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 export default async function NotFound() {
   // Fetch 404 page configuration from Strapi
